@@ -2,16 +2,16 @@
  * Graph of shader snippets.
  */
 GLFrame.ShaderGraph = function (nodes) {
-  var nodes = [];
-
-  var that = this;
-  _.each(nodes, function (node) {
-    that.add(node);
-  });
+  this.nodes = [];
+  this.add(nodes);
 };
 
 GLFrame.ShaderGraph.prototype = {
   add: function (node) {
+    // Array syntax.
+    var that = this;
+    if (node.constructor == Array) return _.each(node, function (node) { that.add(node); });
+
     // Sanity check.
     if (node.graph) throw "Adding node to two graphs at once";
 
@@ -23,6 +23,10 @@ GLFrame.ShaderGraph.prototype = {
   },
 
   remove: function (node) {
+    // Array syntax.
+    var that = this;
+    if (node.constructor == Array) return _.each(node, function (node) { that.remove(node); });
+
     // Sanity check.
     if (node.graph != this) throw "Removing node from wrong graph.";
 
@@ -38,16 +42,13 @@ sg.OUT = 1;
 /**
  * Node in shader graph.
  */
-GLFrame.ShaderNode = function (outlets) {
+GLFrame.ShaderNode = function (delegate) {
   this.graph = null;
   this.in = [];
   this.out = [];
   this.outlets = {};
 
-  var that = this;
-  _.each(outlets, function (outlet) {
-    that.add(outlet);
-  });
+  this.delegate = delegate;
 };
 
 GLFrame.ShaderNode.prototype = {
@@ -58,6 +59,10 @@ GLFrame.ShaderNode.prototype = {
 
   // Add outlet to node.
   add: function (outlet) {
+    // Array syntax.
+    var that = this;
+    if (outlet.constructor == Array) return _.each(outlet, function (outlet) { that.add(outlet); });
+
     var name = outlet.name,
         outlets = this.outlets,
         in = this.in,
@@ -77,6 +82,10 @@ GLFrame.ShaderNode.prototype = {
 
   // Remove outlet from node.
   remove: function (outlet) {
+    // Array syntax.
+    var that = this;
+    if (outlet.constructor == Array) return _.each(outlet, function (outlet) { that.remove(outlet); });
+
     var outlets = this.outlets,
         name = outlet.name,
         inout = outlet.inout,
