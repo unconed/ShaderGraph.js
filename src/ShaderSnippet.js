@@ -3,7 +3,7 @@
  *
  * Must contain a single function with in/out parameters, returning void.
  */
-GLFrame.ShaderSnippet = function (code) {
+ShaderGraph.Snippet = function (code) {
   this.code = code;
 
   this.attributes = {};
@@ -16,18 +16,18 @@ GLFrame.ShaderSnippet = function (code) {
   this.parseCode(code);
 }
 
-GLFrame.ShaderSnippet.types = {
-  'float':     'f',
-  'vec2':      'v2',
-  'vec3':      'v3',
-  'vec4':      'v4',
-  'mat3':      'm3',
-  'mat4':      'm4',
-  'sampler2D': 't',
+ShaderGraph.Snippet.types = {
+  'float':       'f',
+  'vec2':        'v2',
+  'vec3':        'v3',
+  'vec4':        'v4',
+  'mat3':        'm3',
+  'mat4':        'm4',
+  'sampler2D':   't',
   'samplerCube': 't',
 };
 
-GLFrame.ShaderSnippet.defaults = {
+ShaderGraph.Snippet.defaults = {
   'float':       0,
   'vec2':        new THREE.Vector3(),
   'vec3':        new THREE.Vector3(),
@@ -37,10 +37,12 @@ GLFrame.ShaderSnippet.defaults = {
   'samplerCube': 0,
 };
 
-GLFrame.ShaderSnippet.prototype = {
+ShaderGraph.Snippet.prototype = {
 
   type: function (type, array) {
-    return (GLFrame.ShaderSnippet.types[type] || 'f') + (array ? 'v' : '');
+    type = (ShaderGraph.Snippet.types[type] || 'f') + (array ? 'v' : '');
+    type = type == 'fv' ? 'fv1' : type;
+    return type;
   },
 
   parseAttribute: function (match) {
@@ -60,7 +62,7 @@ GLFrame.ShaderSnippet.prototype = {
 
     this.uniforms[name] = {
       type: this.type(type, array),
-      value: GLFrame.ShaderSnippet.defaults[type] || 'f',
+      value: ShaderGraph.Snippet.defaults[type] || 'f',
     };
   },
 
@@ -78,21 +80,21 @@ GLFrame.ShaderSnippet.prototype = {
     this.name = match[1];
     this.signature = match[2];
 
-    var arguments = match[2].split(','), that = this;
+    var arguments = match[2].split(',');
     _.each(arguments, function (signature) {
-      var match = /(in|out|inout)\s+([A-Za-z0-9]+)\s+([^\s;]+)\s*(?:\[([^\]]+)\])?(?:$|(?=;))/.exec(signature);
+      var match = /(in|out|inout)\s+([A-Za-z0-9]+)\s+([A-Za-z0-9_]+)\s*(?:\[([^\]]+)\])?(?:$|(?=;))/.exec(signature);
 
       var inout = match[1],
           type = match[2],
           name = match[3],
           array = match[4];
 
-      that.arguments.push({
+      this.parameters.push({
         inout: match[1],
-        type: that.type(match[2], match[4]),
+        type: this.type(match[2], match[4]),
         name: match[3],
       });
-    });
+    }.bind(this));
   },
 
   parseCode: function (code) {
@@ -107,26 +109,26 @@ GLFrame.ShaderSnippet.prototype = {
     }
 
     // Find all attributes/uniforms/varying + function signature
-    var attributes = findAll(/(?:^|;)\s*attribute\s+([A-Za-z0-9]+)\s+([^\s;]+)\s*(?:\[([^\]]+)\])?(?:$|(?=;))/g);
-    var uniforms = findAll(/(?:^|;)\s*uniform\s+([A-Za-z0-9]+)\s+([^\s;]+)\s*(?:\[([^\]]+)\])?(?:$|(?=;))/g);
-    var varyings = findAll(/(?:^|;)\s*varying\s+([A-Za-z0-9]+)\s+([^\s;]+)\s*(?:\[([^\]]+)\])?(?:$|(?=;))/g);
+    var attributes = findAll(/(?:^|;)\s*attribute\s+([A-Za-z0-9]+)\s+([A-Za-z0-9_]+)\s*(?:\[([^\]]+)\])?(?:$|(?=;))/g);
+    var uniforms = findAll(/(?:^|;)\s*uniform\s+([A-Za-z0-9]+)\s+([A-Za-z0-9_]+)\s*(?:\[([^\]]+)\])?(?:$|(?=;))/g);
+    var varyings = findAll(/(?:^|;)\s*varying\s+([A-Za-z0-9]+)\s+([[A-Za-z0-9_]+)\s*(?:\[([^\]]+)\])?(?:$|(?=;))/g);
     var signature = findAll(/(?:^|;)\s*void\s+([A-Za-z0-9]+)\s*\(([^\)]+)\)\s*{/g);
 
     if (!signature[0]) throw "Could not parse shader snippet. Must contain a void-returning function with in/outs: " + code;
 
     // Process uniforms/varyings and remove from source.
     var matches = {
-      parseAttributes: attributes,
-      parseUniform:    uniforms,
-      parseVarying:    varyings,
+      parseAttribute: attributes,
+      parseUniform:   uniforms,
+      parseVarying:   varyings,
     };
-    var that = this, body = code;
-    _.each(sets, function (set, key) {
+    var body = code;
+    _.each(matches, function (set, key) {
       _.each(set, function (item) {
-        that[key](item);
+        this[key](item);
         body = body.replace(item[0], '');
-      });
-    });
+      }.bind(this));
+    }.bind(this));
 
     // Process function signature.
     this.parseSignature(signature[0]);

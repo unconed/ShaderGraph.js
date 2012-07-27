@@ -3,7 +3,7 @@
 /**
  * Node in shader graph.
  */
-GLFrame.ShaderNode = function (outlets) {
+ShaderGraph.Node = function (outlets) {
   this.graph = null;
   this.in = [];
   this.out = [];
@@ -15,7 +15,7 @@ GLFrame.ShaderNode = function (outlets) {
   });
 };
 
-GLFrame.ShaderNode.prototype = {
+ShaderGraph.Node.prototype = {
 
   link: function (graph) {
     this.graph = graph;
@@ -25,8 +25,8 @@ GLFrame.ShaderNode.prototype = {
   add: function (outlet) {
     var name = outlet.name,
         outlets = this.outlets,
-        in = this.in,
-        out = this.out;
+        _in = this.in,
+        _out = this.out;
 
     // Sanity checks.
     if (outlet.node) throw "Adding outlet to two nodes at once.";
@@ -37,7 +37,7 @@ GLFrame.ShaderNode.prototype = {
 
     // Add to name list and inout list.
     outlets[name] = outlet;
-    (outlet.inout == $.IN ? in : out).push(outlet);
+    (outlet.inout == $.IN ? _in : _out).push(outlet);
   },
 
   // Remove outlet from node.
@@ -45,7 +45,7 @@ GLFrame.ShaderNode.prototype = {
     var outlets = this.outlets,
         name = outlet.name,
         inout = outlet.inout,
-        set = outlet.inout == $.IN ? ? this.in : this.out;
+        set = outlet.inout == $.IN ? this.in : this.out;
 
     // Sanity checks
     if (outlet.node != this) throw "Removing outlet from wrong node.";
@@ -104,9 +104,9 @@ GLFrame.ShaderNode.prototype = {
 
     _.each(this.out, function (outlet) {
       outlet.disconnect();
-    };
-  },
+    });
+  }//,
 
 };
 
-})(GLFrame.ShaderGraph);
+})(ShaderGraph.Graph);

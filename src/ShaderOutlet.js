@@ -1,6 +1,6 @@
 (function ($) {
 
-GLFrame.ShaderOutlet = function (inout, name, type, category) {
+ShaderGraph.Outlet = function (inout, name, type, category) {
   this.node     = null;
   this.inout    = inout;
   this.name     = name;
@@ -11,7 +11,7 @@ GLFrame.ShaderOutlet = function (inout, name, type, category) {
   this.out = [];
 };
 
-GLFrame.ShaderOutlet.prototype = {
+ShaderGraph.Outlet.prototype = {
   // Connect to given outlet.
   connect: function (outlet) {
     // Auto-reverse backwards call.
@@ -60,11 +60,11 @@ GLFrame.ShaderOutlet.prototype = {
         this.out = [];
       }
     }
-  }
+  },
 
   link: function (node) {
     this.node = node;
-  },
+  }//,
 };
 
-})(GLFrame.ShaderGraph);
+})(ShaderGraph.Graph);
