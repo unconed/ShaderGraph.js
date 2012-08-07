@@ -13,16 +13,3 @@
 
 // Namespace.
 window.ShaderGraph = {};
-
-// Simple array/object iterator.
-// (can be replaced with underscore.js)
-window._ = window._ || {};
-_.each = _.each || function (object, callback) {
-  if (object.forEach) {
-    return object.forEach(callback);
-  }
-  for (key in object) {
-    callback(object[key], key, object);
-  }
-};
-

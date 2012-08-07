@@ -2,23 +2,29 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>MathBox - Tests</title>
+  <title>ShaderGraph - Tests</title>
   <style type="text/css" media="screen">
     html, body { height: 100%; }
     body { margin: 0; padding: 0 }
     canvas { display: block }
   </style>
 
+  <script type="text/javascript" charset="utf-8" src="../vendor/underscore.js"></script>
   <script type="text/javascript" charset="utf-8" src="../vendor/tquery-bundle.js"></script>
 
   <script type="text/javascript" charset="utf-8" src="../src/Common.js"></script>
-  <script type="text/javascript" charset="utf-8" src="../src/ShaderGraph.js"></script>
-  <script type="text/javascript" charset="utf-8" src="../src/ShaderNode.js"></script>
-  <script type="text/javascript" charset="utf-8" src="../src/ShaderOutlet.js"></script>
-  <script type="text/javascript" charset="utf-8" src="../src/ShaderSnippet.js"></script>
+  <script type="text/javascript" charset="utf-8" src="../src/Snippet.js"></script>
+  <script type="text/javascript" charset="utf-8" src="../src/Factory.js"></script>
+  <script type="text/javascript" charset="utf-8" src="../src/Block.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../src/Graph/Graph.js"></script>
+  <script type="text/javascript" charset="utf-8" src="../src/Graph/Node.js"></script>
+  <script type="text/javascript" charset="utf-8" src="../src/Graph/Outlet.js"></script>
 
   <script type="text/javascript" charset="utf-8" src="../test/Test.js"></script>
-  <script type="text/javascript" charset="utf-8" src="../test/ShaderSnippet.test.js"></script>
+  <script type="text/javascript" charset="utf-8" src="../test/Graph.test.js"></script>
+  <script type="text/javascript" charset="utf-8" src="../test/Snippet.test.js"></script>
+  <script type="text/javascript" charset="utf-8" src="../test/Factory.test.js"></script>
 
 <script type="text/javascript" charset="utf-8">
   window.onload = function () {

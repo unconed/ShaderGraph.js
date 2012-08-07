@@ -44,11 +44,19 @@ Test = function () {
     for (i in Test.Tests) {
       context = i;
       ++t;
-      Test.Tests[i](function () {
+      try {
+        Test.Tests[i](function () {
+          if (--t == 0) {
+            done();
+          }
+        });
+      }
+      catch (e) {
+        assert(false, 'Exception: ' + e);
         if (--t == 0) {
           done();
         }
-      });
+      }
     }
     if (--t == 0) {
       done();
