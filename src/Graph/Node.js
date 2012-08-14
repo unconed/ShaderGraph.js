@@ -56,7 +56,7 @@ $.Node.prototype = {
     return [outlet.name, outlet.inout].join('-');
   },
 
-  // Set outlet definition
+  // Set new outlet definition
   outlets: function (outlets) {
     if (outlets !== undefined) {
       // Return new/old outlet matching hash key

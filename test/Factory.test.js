@@ -69,7 +69,9 @@ Test.Tests.Factory = function (done) {
 
   // Compile material from node3
   var end = graph.nodes[2];
-  console.log(graph.nodes)
+  var material = end.delegate();
+
+  material.compile();
 
   done();
 };

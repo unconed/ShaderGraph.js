@@ -1,5 +1,8 @@
 (function ($) {
 
+/**
+ * Helps build graphs of blocks/nodes with chainable API.
+ */
 $.Factory = function () {
   this.end();
 };
@@ -59,8 +62,5 @@ $.Factory.prototype = {
   }//,
 };
 
-$.Factory.compile = function (node) {
-  
-};
 
 })(ShaderGraph);

@@ -26,9 +26,12 @@ $.Block.prototype = {
   refresh: function () {
     this._node.delegate(this);
     this._node.outlets(this.outlets());
+  }//,
+
+  get: function (outlet, program) {
+    // add outlet code to program
   },
 
-  //,
 };
 
 $.Block.makeOutlets = function (args) {
@@ -81,6 +84,18 @@ $.Block.Material = function (vertex, fragment) {
 };
 
 $.Block.Material.prototype = _.extend({}, $.Block.prototype, {
+
+  compile: function () {
+    var node = this.node();
+
+    var args = [];
+
+    _.each(node.in, function (outlet) {
+      if (outlet.in) {
+        
+      }
+    });
+  },
 
   outlets: function () {
     var vertex   = $.Block.makeOutlets(this.vertex.arguments());
