@@ -26,7 +26,7 @@ $.Snippet.types = {
   'mat3':        'm3',
   'mat4':        'm4',
   'sampler2D':   't',
-  'samplerCube': 't',
+  'samplerCube': 't'//,
 };
 
 $.Snippet.defaults = {
@@ -36,7 +36,7 @@ $.Snippet.defaults = {
   'vec4':        new THREE.Vector4(),
   'mat4':        new THREE.Matrix4(),
   'sampler2D':   0,
-  'samplerCube': 0,
+  'samplerCube': 0//,
 };
 
 $.Snippet.prototype = {
@@ -78,7 +78,7 @@ $.Snippet.prototype = {
   arguments: function () {
     return {
       uniforms: this.uniforms,
-      parameters: this.parameters,
+      parameters: this.parameters//,
     };
   },
 
@@ -189,7 +189,7 @@ $.Snippet.prototype = {
     var matches = {
       parseAttribute: attributes,
       parseUniform:   uniforms,
-      parseVarying:   varyings,
+      parseVarying:   varyings//,
     };
     var body = code;
     _.each(matches, function (set, key) {
@@ -203,7 +203,7 @@ $.Snippet.prototype = {
     // Process function signature.
     this.parseSignature(signature[0]);
     this.body = body;
-  },
+  }//,
 
 };
 

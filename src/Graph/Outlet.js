@@ -19,8 +19,8 @@ $.Outlet = function (inout, name, hint, type, category, exposed, meta) {
   this.meta     = meta || {};
   this.index    = ++$.Outlets;
 
-  this.in = null;
-  this.out = [];
+  this.input = null;
+  this.output = [];
 };
 
 $.Outlet.prototype = {
@@ -53,43 +53,44 @@ $.Outlet.prototype = {
 
     // Disallow bad combinations.
     if (this.inout != $.OUT || outlet.inout != $.IN) {
+      console.log(this, outlet)
       throw "Can't connect out/out or in/in outlets.";
     }
 
     // Check for existing connection.
-    if (outlet.in == this) return;
+    if (outlet.input == this) return;
 
     // Disconnect existing connections.
     outlet.disconnect();
 
     // Add new connection.
-    outlet.in = this;
-    this.out.push(outlet);
+    outlet.input = this;
+    this.output.push(outlet);
   },
 
   // Disconnect given outlet (or all).
   disconnect: function (outlet) {
     if (this.inout == $.IN) {
       // Disconnect input from the other side.
-      if (this.in) {
-        this.in.disconnect(this);
+      if (this.input) {
+        this.input.disconnect(this);
       }
     }
     else {
       if (outlet) {
         // Remove one outgoing connection.
-        var index = this.out.indexOf(outlet);
+        var index = this.output.indexOf(outlet);
         if (index >= 0) {
-          this.out.splice(index, 1);
-          outlet.in = null
+          this.output.splice(index, 1);
+          outlet.input = null
         }
       }
       else {
         // Remove all outgoing connections.
-        _.each(this.out, function (outlet) {
-          outlet.in = null
+        _.each(this.output, function (outlet) {
+          outlet.input = null
         });
-        this.out = [];
+        this.output = [];
       }
     }
   },

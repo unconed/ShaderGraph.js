@@ -32,8 +32,8 @@ $.Graph.prototype = {
   inputs: function () {
     var inputs = [];
     this.iterate(function (node) {
-      _.each(node.in, function (outlet) {
-        if (outlet.in == null) {
+      _.each(node.inputs, function (outlet) {
+        if (outlet.input == null) {
           inputs.push(outlet);
         }
       });
@@ -44,8 +44,8 @@ $.Graph.prototype = {
   outputs: function () {
     var outputs = [];
     this.iterate(function (node) {
-      _.each(node.out, function (outlet) {
-        if (outlet.out.length == 0) {
+      _.each(node.outputs, function (outlet) {
+        if (outlet.output.length == 0) {
           outputs.push(outlet);
         }
       });
@@ -85,7 +85,7 @@ $.Graph.prototype = {
 
     // Remove node from list.
     this.nodes.splice(this.nodes.indexOf(node), 1);
-  },
+  }//,
 };
 
 $.IN = 0;

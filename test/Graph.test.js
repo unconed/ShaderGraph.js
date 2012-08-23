@@ -102,12 +102,12 @@ Test.Tests.Graph = function (assert, done) {
   assert(node2.graph == graph, 'Node 2 is part of graph');
   assert(node3.graph == graph, 'Node 3 is part of graph');
 
-  assert(node1.in.length  == 1, 'Node 1 has correct # of in outlets');
-  assert(node1.out.length == 4, 'Node 1 has correct # of out outlets');
-  assert(node2.in.length  == 4, 'Node 2 has correct # of in outlets');
-  assert(node2.out.length == 1, 'Node 2 has correct # of out outlets');
-  assert(node3.in.length  == 3, 'Node 3 has correct # of in outlets');
-  assert(node3.out.length == 1, 'Node 3 has correct # of out outlets');
+  assert(node1.inputs.length  == 1, 'Node 1 has correct # of in outlets');
+  assert(node1.outputs.length == 4, 'Node 1 has correct # of out outlets');
+  assert(node2.inputs.length  == 4, 'Node 2 has correct # of in outlets');
+  assert(node2.outputs.length == 1, 'Node 2 has correct # of out outlets');
+  assert(node3.inputs.length  == 3, 'Node 3 has correct # of in outlets');
+  assert(node3.outputs.length == 1, 'Node 3 has correct # of out outlets');
 
   // Verify outlets exist
   assert(node1.get('position'), 'Node 1 has position');
@@ -123,85 +123,85 @@ Test.Tests.Graph = function (assert, done) {
   assert(true, 'Connected Node 1 and Node 2');
 
   // Verify connected sockets
-  assert(node2.getIn('position').in          == node1.getOut('position'), 'N2 Position is wired up (in)');
-  assert(node2.getIn('alpha').in             == node1.getOut('alpha'), 'N2 Alpha is wired up (in)');
-  assert(node2.getIn('color').in             == node1.getOut('color'), 'N2 Color is wired up (in)');
-  assert(node2.getIn('matrix').in            == node1.getOut('matrix'), 'N2 Matrix is wired up (in)');
+  assert(node2.getIn('position').input       == node1.getOut('position'), 'N2 Position is wired up (in)');
+  assert(node2.getIn('alpha').input          == node1.getOut('alpha'), 'N2 Alpha is wired up (in)');
+  assert(node2.getIn('color').input          == node1.getOut('color'), 'N2 Color is wired up (in)');
+  assert(node2.getIn('matrix').input         == node1.getOut('matrix'), 'N2 Matrix is wired up (in)');
 
-  assert(node1.getOut('position').out.length == 1, 'N1 Position has one connection (out)');
-  assert(node1.getOut('alpha').out.length    == 1, 'N1 Alpha has one connection (out)');
-  assert(node1.getOut('color').out.length    == 1, 'N1 Color has one connection (out)');
-  assert(node1.getOut('matrix').out.length   == 1, 'N1 Matrix has one connection (out)');
+  assert(node1.getOut('position').output.length == 1, 'N1 Position has one connection (out)');
+  assert(node1.getOut('alpha').output.length    == 1, 'N1 Alpha has one connection (out)');
+  assert(node1.getOut('color').output.length    == 1, 'N1 Color has one connection (out)');
+  assert(node1.getOut('matrix').output.length   == 1, 'N1 Matrix has one connection (out)');
 
-  assert(node2.getIn('position')             == node1.getOut('position').out[0], 'N1 Position is wired up (out)');
-  assert(node2.getIn('alpha')                == node1.getOut('alpha').out[0], 'N1 Alpha is wired up (out)');
-  assert(node2.getIn('color')                == node1.getOut('color').out[0], 'N1 Color is wired up (out)');
-  assert(node2.getIn('matrix')               == node1.getOut('matrix').out[0], 'M1 Matrix is wired up (out)');
+  assert(node2.getIn('position')             == node1.getOut('position').output[0], 'N1 Position is wired up (out)');
+  assert(node2.getIn('alpha')                == node1.getOut('alpha').output[0], 'N1 Alpha is wired up (out)');
+  assert(node2.getIn('color')                == node1.getOut('color').output[0], 'N1 Color is wired up (out)');
+  assert(node2.getIn('matrix')               == node1.getOut('matrix').output[0], 'M1 Matrix is wired up (out)');
 
   // Verify other inputs/outputs are untouched
-  assert(node2.getOut('matrix').out.length == 0, 'N2 Matrix is ignored (out)');
-  assert(node1.getIn('color').in           == null, 'N1 Color is ignored (in)');
+  assert(node2.getOut('matrix').output.length == 0, 'N2 Matrix is ignored (out)');
+  assert(node1.getIn('color').input           == null, 'N1 Color is ignored (in)');
 
   // Disconnect from the out side
   node1.get('position').disconnect();
   assert(true, 'Disconnected N1-N2 Position');
-  assert(node1.getOut('position').out.length == 0, 'N1 Position out is disconnected');
-  assert(node2.getIn('position').in          == null, 'N2 Position in is disconnected');
+  assert(node1.getOut('position').output.length == 0, 'N1 Position out is disconnected');
+  assert(node2.getIn('position').input          == null, 'N2 Position in is disconnected');
 
   // Verify connected sockets
-  assert(node2.getIn('alpha').in            == node1.getOut('alpha'), 'N2 Alpha is wired up (in)');
-  assert(node2.getIn('color').in            == node1.getOut('color'), 'N2 Color is wired up (in)');
-  assert(node2.getIn('matrix').in           == node1.getOut('matrix'), 'N2 Matrix is wired up (in)');
+  assert(node2.getIn('alpha').input         == node1.getOut('alpha'), 'N2 Alpha is wired up (in)');
+  assert(node2.getIn('color').input         == node1.getOut('color'), 'N2 Color is wired up (in)');
+  assert(node2.getIn('matrix').input        == node1.getOut('matrix'), 'N2 Matrix is wired up (in)');
 
-  assert(node1.getOut('alpha').out.length   == 1, 'N1 Alpha has one connection (out)');
-  assert(node1.getOut('color').out.length   == 1, 'N1 Color has one connection (out)');
-  assert(node1.getOut('matrix').out.length  == 1, 'N1 Matrix has one connection (out)');
+  assert(node1.getOut('alpha').output.length   == 1, 'N1 Alpha has one connection (out)');
+  assert(node1.getOut('color').output.length   == 1, 'N1 Color has one connection (out)');
+  assert(node1.getOut('matrix').output.length  == 1, 'N1 Matrix has one connection (out)');
 
-  assert(node2.getIn('alpha')               == node1.getOut('alpha').out[0], 'N1 Alpha is wired up (out)');
-  assert(node2.getIn('color')               == node1.getOut('color').out[0], 'N1 Color is wired up (out)');
-  assert(node2.getIn('matrix')              == node1.getOut('matrix').out[0], 'N1 Matrix is wired up (out)');
+  assert(node2.getIn('alpha')               == node1.getOut('alpha').output[0], 'N1 Alpha is wired up (out)');
+  assert(node2.getIn('color')               == node1.getOut('color').output[0], 'N1 Color is wired up (out)');
+  assert(node2.getIn('matrix')              == node1.getOut('matrix').output[0], 'N1 Matrix is wired up (out)');
 
   // Disconnect from the in side
   node2.get('color').disconnect();
-  assert(node1.getOut('color').out.length == 0, 'N1 Color out is disconnected');
-  assert(node2.getIn('color').in          == null, 'N2 Color in is disconnected');
+  assert(node1.getOut('color').output.length == 0, 'N1 Color out is disconnected');
+  assert(node2.getIn('color').input          == null, 'N2 Color in is disconnected');
 
   // Verify connected sockets
-  assert(node2.getIn('alpha').in           == node1.getOut('alpha'), 'N2 Alpha is wired up (in)');
-  assert(node2.getIn('matrix').in          == node1.getOut('matrix'), 'N2 Matrix is wired up (in)');
+  assert(node2.getIn('alpha').input           == node1.getOut('alpha'), 'N2 Alpha is wired up (in)');
+  assert(node2.getIn('matrix').input          == node1.getOut('matrix'), 'N2 Matrix is wired up (in)');
 
-  assert(node1.getOut('alpha').out.length  == 1, 'N1 Alpha has one connection (out)');
-  assert(node1.getOut('matrix').out.length == 1, 'N1 Matrix has one connection (out)');
+  assert(node1.getOut('alpha').output.length  == 1, 'N1 Alpha has one connection (out)');
+  assert(node1.getOut('matrix').output.length == 1, 'N1 Matrix has one connection (out)');
 
-  assert(node2.getIn('alpha')              == node1.getOut('alpha').out[0], 'N1 Alpha is wired up (out)');
-  assert(node2.getIn('matrix')             == node1.getOut('matrix').out[0], 'N1 Matrix is wired up (out)');
+  assert(node2.getIn('alpha')              == node1.getOut('alpha').output[0], 'N1 Alpha is wired up (out)');
+  assert(node2.getIn('matrix')             == node1.getOut('matrix').output[0], 'N1 Matrix is wired up (out)');
 
   // Connect third node to first automatically.
   node1.connect(node3);
   assert(true, 'Connected Node 1 and Node 3');
 
   // Verify that existing connections to node2 are still ok.
-  assert(node2.getIn('alpha').in           == node1.getOut('alpha'), 'N2 Alpha is still wired up (in)');
-  assert(node2.getIn('matrix').in          == node1.getOut('matrix'), 'N2 Matrix is still wired up (in)');
+  assert(node2.getIn('alpha').input           == node1.getOut('alpha'), 'N2 Alpha is still wired up (in)');
+  assert(node2.getIn('matrix').input          == node1.getOut('matrix'), 'N2 Matrix is still wired up (in)');
 
-  assert(node1.getOut('alpha').out.length  >= 1, 'N1 Alpha has at least one connection (out)');
-  assert(node1.getOut('matrix').out.length == 1, 'N1 Matrix has one connection (out)');
+  assert(node1.getOut('alpha').output.length  >= 1, 'N1 Alpha has at least one connection (out)');
+  assert(node1.getOut('matrix').output.length == 1, 'N1 Matrix has one connection (out)');
 
-  assert(node2.getIn('alpha')              == node1.getOut('alpha').out[0], 'N1 Alpha is still wired up (out)');
-  assert(node2.getIn('matrix')             == node1.getOut('matrix').out[0], 'N1 Matrix is still wired up (out)');
+  assert(node2.getIn('alpha')              == node1.getOut('alpha').output[0], 'N1 Alpha is still wired up (out)');
+  assert(node2.getIn('matrix')             == node1.getOut('matrix').output[0], 'N1 Matrix is still wired up (out)');
 
   // Verify that third node is connected.
-  assert(node3.getIn('alpha').in             == node1.getOut('alpha'), 'N3 Alpha is wired up (in)');
-  assert(node3.getIn('color').in             == node1.getOut('color'), 'N3 Color is wired up (in)');
-  assert(node3.getIn('position').in          == node1.getOut('position'), 'N3 Position is wired up (in)');
+  assert(node3.getIn('alpha').input             == node1.getOut('alpha'), 'N3 Alpha is wired up (in)');
+  assert(node3.getIn('color').input             == node1.getOut('color'), 'N3 Color is wired up (in)');
+  assert(node3.getIn('position').input          == node1.getOut('position'), 'N3 Position is wired up (in)');
 
-  assert(node1.getOut('alpha').out.length    == 2, 'N1 Alpha has two connections (out)');
-  assert(node1.getOut('color').out.length    == 1, 'N1 Color has one connection (out)');
-  assert(node1.getOut('position').out.length == 1, 'N1 Position has one connection (out)');
+  assert(node1.getOut('alpha').output.length    == 2, 'N1 Alpha has two connections (out)');
+  assert(node1.getOut('color').output.length    == 1, 'N1 Color has one connection (out)');
+  assert(node1.getOut('position').output.length == 1, 'N1 Position has one connection (out)');
 
-  assert(node3.getIn('alpha')                == node1.getOut('alpha').out[1], 'N1 Alpha is wired up (out)');
-  assert(node3.getIn('color')                == node1.getOut('color').out[0], 'N1 Color is wired up (out)');
-  assert(node3.getIn('position')             == node1.getOut('position').out[0], 'N1 Position is wired up (out)');
+  assert(node3.getIn('alpha')                == node1.getOut('alpha').output[1], 'N1 Alpha is wired up (out)');
+  assert(node3.getIn('color')                == node1.getOut('color').output[0], 'N1 Color is wired up (out)');
+  assert(node3.getIn('position')             == node1.getOut('position').output[0], 'N1 Position is wired up (out)');
 
   // Change node 1 definition.
   // Existing outlets must remain connected for the test to pass.
@@ -234,29 +234,29 @@ Test.Tests.Graph = function (assert, done) {
   assert(true, 'Changed Node 1 definition');
 
   // Verify that alpha connection to node2 was kept
-  assert(node2.getIn('alpha').in          == node1.getOut('alpha'), 'N2 Alpha is still wired up (in)');
-  assert(node1.getOut('alpha').out.length >= 1, 'N1 Alpha has at least one connection (out)');
-  assert(node2.getIn('alpha')             == node1.getOut('alpha').out[0], 'N1 Alpha is still wired up (out)');
+  assert(node2.getIn('alpha').input          == node1.getOut('alpha'), 'N2 Alpha is still wired up (in)');
+  assert(node1.getOut('alpha').output.length >= 1, 'N1 Alpha has at least one connection (out)');
+  assert(node2.getIn('alpha')             == node1.getOut('alpha').output[0], 'N1 Alpha is still wired up (out)');
 
   // Verify that matrix and color connections were dropped.
-  assert(node2.getIn('matrix').in         === null, 'N2 Matrix was disconnected (in)');
-  assert(node3.getIn('color').in          === null, 'N3 Color was disconnected (in)');
+  assert(node2.getIn('matrix').input         === null, 'N2 Matrix was disconnected (in)');
+  assert(node3.getIn('color').input          === null, 'N3 Color was disconnected (in)');
 
-  assert(node1.getOut('matrix').out.length == 0, 'N1 Matrix output is not connected (out)');
+  assert(node1.getOut('matrix').output.length == 0, 'N1 Matrix output is not connected (out)');
   assert(node1.getOut('color')            === undefined, 'N1 Color output has disappeared (out)');
 
   // Verify that alpha and position connections to node3 were kept
-  assert(node3.getIn('alpha').in            == node1.getOut('alpha'), 'N3 Alpha is still wired up (in)');
-  assert(node3.getIn('position').in         == node1.getOut('position'), 'N3 Position is still wired up (in)');
+  assert(node3.getIn('alpha').input            == node1.getOut('alpha'), 'N3 Alpha is still wired up (in)');
+  assert(node3.getIn('position').input         == node1.getOut('position'), 'N3 Position is still wired up (in)');
 
-  assert(node1.getOut('alpha').out.length    == 2, 'N1 Alpha has two connections (out)');
-  assert(node1.getOut('position').out.length == 1, 'N1 Position has 1 connection (out)')
+  assert(node1.getOut('alpha').output.length    == 2, 'N1 Alpha has two connections (out)');
+  assert(node1.getOut('position').output.length == 1, 'N1 Position has 1 connection (out)')
 
-  assert(node3.getIn('alpha')               == node1.getOut('alpha').out[1], 'N1 Alpha is still wired up (out)');
-  assert(node3.getIn('position')            == node1.getOut('position').out[0], 'N1 Position is still wired up (out)');
+  assert(node3.getIn('alpha')               == node1.getOut('alpha').output[1], 'N1 Alpha is still wired up (out)');
+  assert(node3.getIn('position')            == node1.getOut('position').output[0], 'N1 Position is still wired up (out)');
 
   // Verify color input is untouched      
-  assert(node1.getIn('color').in      == null, 'N1 Color is ignored (in)');
+  assert(node1.getIn('color').input      == null, 'N1 Color is ignored (in)');
 
   // Change node3 definition
   var def5 = [
@@ -284,14 +284,14 @@ Test.Tests.Graph = function (assert, done) {
   assert(node3.getIn('alpha')           === undefined, 'N3 Alpha was dropped (in)');
 
   // Verify that alpha connection between node1 and node2 is unchanged
-  assert(node2.getIn('alpha').in         == node1.getOut('alpha'), 'N2 Alpha is still wired up (in)');
-  assert(node1.getOut('alpha').out.length == 1, 'N1 Alpha has one connection (out)');
-  assert(node2.getIn('alpha')            == node1.getOut('alpha').out[0], 'N1 Alpha is still wired up (out)');
+  assert(node2.getIn('alpha').input         == node1.getOut('alpha'), 'N2 Alpha is still wired up (in)');
+  assert(node1.getOut('alpha').output.length == 1, 'N1 Alpha has one connection (out)');
+  assert(node2.getIn('alpha')            == node1.getOut('alpha').output[0], 'N1 Alpha is still wired up (out)');
 
   // Verify that position connection between node1 and node3 is unchanged
-  assert(node3.getIn('position').in         == node1.getOut('position'), 'N3 Position is still wired up (in)');
-  assert(node1.getOut('position').out.length == 1, 'N1 Position has one connection (out)');
-  assert(node3.getIn('position')            == node1.getOut('position').out[0], 'N1 Position is still wired up (out)');
+  assert(node3.getIn('position').input         == node1.getOut('position'), 'N3 Position is still wired up (in)');
+  assert(node1.getOut('position').output.length == 1, 'N1 Position has one connection (out)');
+  assert(node3.getIn('position')            == node1.getOut('position').output[0], 'N1 Position is still wired up (out)');
 
   // Verify graph inputs/outputs
   var inputs = graph.inputs();

@@ -26,7 +26,7 @@ $.Program.types = {
   'v4': 'vec4',
   'm3': 'mat3',
   'm4': 'mat4',
-  't':  'sampler2D',
+  't':  'sampler2D'//,
 };
 
 $.Program.prototype = {
@@ -63,7 +63,7 @@ $.Program.prototype = {
       if (e.category == 'uniform') {
         this.uniforms[e.name] = {
           type: e.type,
-          value: e.value,
+          value: e.value//,
         };
       }
     }.bind(this));
@@ -104,9 +104,9 @@ $.Program.prototype = {
     return new THREE.ShaderMaterial({
       uniforms: this.uniforms,
       vertexShader: this.vertex,
-      fragmentShader: this.fragment,
+      fragmentShader: this.fragment//,
     });
-  },
+  }//,
 
 };
 

@@ -5,8 +5,8 @@
  */
 $.Node = function (owner, outlets) {
   this.graph = null;
-  this.in = [];
-  this.out = [];
+  this.inputs = [];
+  this.outputs = [];
   this._outlets = {};
 
   this.owner(owner);
@@ -101,8 +101,8 @@ $.Node.prototype = {
   add: function (outlet) {
     var key = this.key(outlet);
         outlets = this._outlets,
-        _in = this.in,
-        _out = this.out;
+        _in = this.inputs,
+        _out = this.outputs;
 
     // Sanity checks.
     if (outlet.node) throw "Adding outlet to two nodes at once.";
@@ -124,7 +124,7 @@ $.Node.prototype = {
     var outlets = this._outlets,
         key = this.key(outlet),
         inout = outlet.inout,
-        set = outlet.inout == $.IN ? this.in : this.out;
+        set = outlet.inout == $.IN ? this.inputs : this.outputs;
 
     // Sanity checks
     if (outlet.node != this) throw "Removing outlet from wrong node.";
@@ -159,7 +159,7 @@ $.Node.prototype = {
 
     // Build hash keys of target outlets.
     reset();
-    _.each(node.in, function (outlet) {
+    _.each(node.inputs, function (outlet) {
       // Match outlets by type/name hint, then type/position key.
       var match = outlet.type,
           hint = [match, outlet.hint].join('-'),
@@ -172,7 +172,7 @@ $.Node.prototype = {
 
     // Build hash keys of source outlets.
     reset();
-    _.each(this.out, function (outlet) {
+    _.each(this.outputs, function (outlet) {
       // Match outlets by type and name.
       var match = outlet.type,
           hint = [match, outlet.hint].join('-');
@@ -199,11 +199,11 @@ $.Node.prototype = {
 
   // Disconnect entire node
   disconnect: function (node) {
-    _.each(this.in, function (outlet) {
+    _.each(this.inputs, function (outlet) {
       outlet.disconnect();
     });
 
-    _.each(this.out, function (outlet) {
+    _.each(this.outputs, function (outlet) {
       outlet.disconnect();
     });
 

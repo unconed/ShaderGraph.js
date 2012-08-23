@@ -32,6 +32,7 @@ Test = function () {
 
   function done() {
     asserts.push('<strong>Tests: ' + stats.pass + ' / ' + stats.run + '</strong> &nbsp;–&nbsp; ' + stats.fail + ' failed ');
+    document.body.style.backgroundColor = stats.pass == stats.run ? '#eeffee' : '#ffeeee';
     report();
   }
 

@@ -13,3 +13,9 @@
 
 // Namespace.
 window.ShaderGraph = {};
+
+// Fetch shader from <script> tag by id
+ShaderGraph.getShader = function (id) {
+  var elem = document.getElementById(id);
+  return elem && elem.innerText || id;
+};

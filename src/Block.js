@@ -34,7 +34,7 @@ $.Block.prototype = {
 
   fetch: function (program, phase, outlet, priority) {
     // add outlet code to program
-  },
+  }//,
 
 };
 
@@ -82,7 +82,7 @@ $.Block.Material = function (vertex, fragment) {
 $.Block.Material.prototype = _.extend({}, $.Block.prototype, {
 
   compile: function () {
-    if (this.node().out.length > 0) throw "Can't compile material with outputs";
+    if (this.node().outputs.length > 0) throw "Can't compile material with outputs";
 
     var node = this.node();
     var program = new $.Program();
@@ -150,7 +150,7 @@ $.Block.Snippet.makeOutlets = function (args) {
 }
 
 /**
- * Compile a GLSL snippet call.
+ * Compile a GLSL snippet call by tracing inputs across the graph.
  */
 $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority) {
   var signature = snippet.arguments();
@@ -160,10 +160,10 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
   _.each(signature.parameters, function (arg) {
     var outlet = node.get(arg.name);
     if (arg.inout == $.IN) {
-      if (outlet.in) {
-        var owner = outlet.in.node.owner();
+      if (outlet.input) {
+        var owner = outlet.input.node.owner();
 
-        var variable = owner.fetch(program, phase, outlet.in, priority + 1);
+        var variable = owner.fetch(program, phase, outlet.input, priority + 1);
         program.variable(phase, variable, arg.type);
         args.push(variable);
       }
@@ -184,10 +184,10 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
     var outlet = node.get(arg.name);
 
     // Replace uniform with argument
-    if (outlet.in) {
-      var owner = outlet.in.node.owner();
+    if (outlet.input) {
+      var owner = outlet.input.node.owner();
 
-      var variable = owner.fetch(program, phase, outlet.in, priority + 1);
+      var variable = owner.fetch(program, phase, outlet.input, priority + 1);
       program.variable(phase, variable, arg.type);
       args.push(variable);
       replaced.push(arg.name);
@@ -198,9 +198,10 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
     }
   });
 
-  // Add code and call to program.
+  // Compile snippet and add to program.
   var name = ['__', phase, snippet.name, node.owner().index ].join('');
-  program.add(phase, name, args, snippet.compile(name, replaced), priority);
+  var code = snippet.compile(name, replaced);
+  program.add(phase, name, args, code, priority);
 };
 
 

@@ -59,13 +59,13 @@ Test.Tests.Factory = function (assert, done) {
   assert(node2 instanceof ShaderGraph.Node, 'Node 2 created from snippet code');
   assert(node3 instanceof ShaderGraph.Node, 'Node 3 created from snippet code');
 
-  assert(node1.in.length == 1, 'Node 1 has one input');
-  assert(node2.in.length == 1, 'Node 2 has one input');
-  assert(node3.in.length == 1, 'Node 3 has one input');
+  assert(node1.inputs.length == 1, 'Node 1 has one input');
+  assert(node2.inputs.length == 1, 'Node 2 has one input');
+  assert(node3.inputs.length == 1, 'Node 3 has one input');
 
-  assert(node1.out.length == 1, 'Node 1 has one output');
-  assert(node2.out.length == 1, 'Node 2 has one output');
-  assert(node3.out.length == 0, 'Node 3 has no outputs');
+  assert(node1.outputs.length == 1, 'Node 1 has one output');
+  assert(node2.outputs.length == 1, 'Node 2 has one output');
+  assert(node3.outputs.length == 0, 'Node 3 has no outputs');
 
   // Test chainable creation methods
   // frag1 -> frag2 --> frag3/vertex2

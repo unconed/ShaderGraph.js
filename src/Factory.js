@@ -10,14 +10,14 @@ $.Factory = function () {
 $.Factory.prototype = {
 
   snippet: function (code) {
-    var block = new $.Block.Snippet(code);
+    var block = new $.Block.Snippet(ShaderGraph.getShader(code));
     this.append(block.node());
 
     return this;
   },
 
   material: function (vertex, fragment) {
-    var block = new $.Block.Material(vertex, fragment);
+    var block = new $.Block.Material(ShaderGraph.getShader(vertex), ShaderGraph.getShader(fragment));
     this.append(block.node());
 
     return this;
