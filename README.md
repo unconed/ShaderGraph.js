@@ -59,7 +59,7 @@ Here we'll build a shader for sampling a texture, changing the sample color, and
 We'll have two vertex snippets and three fragment snippets:
 
 ```
-<script type="application/x-glsl" id="snippet-vertex1">
+<script type="application/x-glsl" id="vertex1">
 // Provide varying UV coordinates
 varying vec2 vUV;
 void main() {
@@ -67,7 +67,7 @@ void main() {
 }
 </script>
 
-<script type="application/x-glsl" id="snippet-fragment1">
+<script type="application/x-glsl" id="fragment1">
 // Read from texture
 uniform sampler2D texture;
 varying vec2 vUV;
@@ -76,7 +76,7 @@ void main(out vec3 color) {
 }
 </script>
 
-<script type="application/x-glsl" id="snippet-fragment2">
+<script type="application/x-glsl" id="fragment2">
 // Fade out color
 uniform vec3 colorIn
 void main(out vec3 colorOut) {
@@ -84,7 +84,7 @@ void main(out vec3 colorOut) {
 }
 </script>
 
-<script type="application/x-glsl" id="snippet-vertex3">
+<script type="application/x-glsl" id="vertex3">
 // Project position into view',
 void main() {
   gl_Position = projectionMatrix *
@@ -93,7 +93,7 @@ void main() {
 }
 </script>
 
-<script type="application/x-glsl" id="snippet-fragment3">
+<script type="application/x-glsl" id="fragment3">
 // Output color
 uniform vec3 color;
 void main() {
@@ -102,16 +102,16 @@ void main() {
 </script>
 ```
 
-We'll assume these scripts are already loaded from the DOM into variables. We build the graph using the provided factory, passing in the pieces of GLSL code:
+ShaderGraph auto-loads the scripts from the DOM into variables. We build the graph using the provided factory, passing in the pieces of GLSL code:
 
 ![Example nodes](https://raw.github.com/unconed/ShaderGraph.js/master/misc/nodes.png)
 
 ```
 var factory = new ShaderGraph.Factory();
 var graph = factory
-  .material(vertex1, fragment1)
-  .snippet(fragment2)
-  .material(vertex3, fragment3)
+  .material('vertex1', 'fragment1')
+  .snippet('fragment2')
+  .material('vertex3', 'fragment3')
   .end();
 ```
 

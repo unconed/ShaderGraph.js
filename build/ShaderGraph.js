@@ -219,7 +219,8 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
         args.push(variable);
       }
       else {
-        throw ["Missing connection on outlet for " + arg.name, outlet.name];
+        console.log('Outlet', arg, outlet);
+        throw ["Missing connection on outlet for " + arg.name];
       }
     }
     else if (arg.inout == $.OUT) {
@@ -267,17 +268,32 @@ $.Factory = function () {
 
 $.Factory.prototype = {
 
-  snippet: function (code) {
+  snippet: function (code, op) {
+    op = op || 'append';
+
     var block = new $.Block.Snippet(ShaderGraph.getShader(code));
-    this.append(block.node());
+    this[op](block.node());
 
     return this;
   },
 
-  material: function (vertex, fragment) {
-    var block = new $.Block.Material(ShaderGraph.getShader(vertex), ShaderGraph.getShader(fragment));
-    this.append(block.node());
+  material: function (vertex, fragment, op) {
+    op = op || 'append';
 
+    var block = new $.Block.Material(ShaderGraph.getShader(vertex), ShaderGraph.getShader(fragment));
+    this[op](block.node());
+
+    return this;
+  },
+
+  snippetBefore: function (code) {
+    this.snippet(code, 'prepend');
+    return this;
+  },
+
+
+  materialBefore: function (vertex, fragment) {
+    this.material(code, 'prepend');
     return this;
   },
 
@@ -299,6 +315,8 @@ $.Factory.prototype = {
 
   prepend: function (node) {
     this.graph.add(node);
+
+    var context = this.stack[0];
 
     _.each(context.start, function (start) {
       node.connect(start);
@@ -331,6 +349,8 @@ $.Factory.prototype = {
 
     main.start = main.start.concat(sub.start);
     main.end   = main.end.concat(sub.end);
+
+    return this;
   },
 
   end: function () {

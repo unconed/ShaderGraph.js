@@ -168,7 +168,8 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
         args.push(variable);
       }
       else {
-        throw ["Missing connection on outlet for " + arg.name, outlet.name];
+        console.log('Outlet', arg, outlet);
+        throw ["Missing connection on outlet for " + arg.name];
       }
     }
     else if (arg.inout == $.OUT) {
