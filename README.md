@@ -177,7 +177,7 @@ The snippets are included as library functions with altered signatures, and a ma
 
 While this example might seem like a lot of handwaving to do very little, it can be a powerful approach if you have a decent standard library of snippets to re-use. ShaderGraph is more flexible than simply concatenating strings together, and lets you write your building blocks in vanilla GLSL with only a few minor restrictions (*).
 
-(*) Currently, array arguments are not reliably supported, and `inout` arguments and vertex attributes do not work.
+(*) Currently, array arguments are not reliably supported, and `inout` arguments and vertex attributes do not work. All of these are partially supported, but some pieces are missing.
 
 * * *
 
