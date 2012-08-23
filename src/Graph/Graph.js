@@ -13,7 +13,7 @@ $.Graph.prototype = {
 
   iterate: function (callback) {
     _.each(this.nodes, function (node) {
-      callback(node, node._delegate);
+      callback(node, node._owner);
     });
   },
 
@@ -51,6 +51,10 @@ $.Graph.prototype = {
       });
     });
     return outputs;
+  },
+
+  tail: function () {
+    return this.nodes[this.nodes.length - 1];
   },
 
   add: function (node) {

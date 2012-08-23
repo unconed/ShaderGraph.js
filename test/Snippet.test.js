@@ -1,4 +1,4 @@
-Test.Tests.Snippet = function (done) {
+Test.Tests.Snippet = function (assert, done) {
 
   var code = [
 '  // Comment ',
@@ -27,7 +27,7 @@ Test.Tests.Snippet = function (done) {
 '  attribute vec3 av3v[3];',
 '  attribute mat4 am4;',
 '  attribute mat4 am4v[3];',
-'  void main(',
+'  void snippetTest(',
 '    in vec4 v4in, mat3 m3vin[3],',
 '    out vec4 v4out, out vec4 v4vout[3], out mat4 m4out, out mat4 m4vout[3]) {',
 '       gl_FragColor = v4in.xyz;',
@@ -55,9 +55,10 @@ Test.Tests.Snippet = function (done) {
 
   function verifyParameters() {
     var total = counts.parameters;
+    var inouts = [ 'in', 'out', 'inout' ];
     _.each(snippet.parameters, function (parameter, key) {
       counts.parameters--;
-      assert(parameter.name == parameter.type + parameter.inout, ' Parameter type ' + parameter.name);
+      assert(parameter.name == parameter.type + inouts[parameter.inout], ' Parameter type ' + parameter.name);
     });
     assert(counts.parameters == 0, 'Found all '+ total + ' parameters');
   }
@@ -67,9 +68,10 @@ Test.Tests.Snippet = function (done) {
   verifyTypes('attributes');
   verifyParameters();
 
-  assert(snippet.body.match(/^[\s;]+void main/), 'All parameters separated from body.');
+  assert(snippet.body.match(/^\s*void snippetTest/), 'All parameters separated from body.');
 
-  var call = snippet.compile('snippetTest', ['uf', 'ufv1']);
+  var call = snippet.compile('snippetRename', ['uf', 'ufv1']);
+  assert(call.match(/void\s*snippetRename\s*\(/), 'Function renamed');
   assert(call.match(/gl_FragColor\s*=\s*v4in.xyz\s*;/), 'Shader body preserved');
   assert(!call.match(/uniform\s*float\s*uf\s*;/), 'Float uniform removed');
   assert(!call.match(/uniform\s*float\s*ufv1\[3\]\s*;/), 'Float array uniform removed');

@@ -26,13 +26,15 @@ $.Factory.prototype = {
   append: function (node) {
     this.graph.add(node);
 
-    if (this._end) {
-      this._end.connect(node);
+    var context = this.stack[0];
+
+    _.each(context.end, function (end) {
+      end.connect(node);
+    });
+    if (!context.start.length) {
+      context.start = [node];
     }
-    if (!this._start) {
-      this._start = node;
-    }
-    this._end = node;
+    context.end = [node];
 
     return this;
   },
@@ -40,23 +42,45 @@ $.Factory.prototype = {
   prepend: function (node) {
     this.graph.add(node);
 
-    if (this._start) {
-      node.connect(this._start);
+    _.each(context.start, function (start) {
+      node.connect(start);
+    });
+    if (!context.end.length) {
+      context.end = [node];
     }
-    if (!this._end) {
-      this._end = node;
-    }
-    this._start = node;
+    context.start = [node];
 
     return this;
+  },
+
+  group: function () {
+    this.stack.unshift({ start: [], end: [] });
+
+    return this;
+  },
+
+  next: function () {
+    this.combine().group();
+
+    return this;
+  },
+
+  combine: function () {
+    if (this.stack.length <= 1) throw "Popping factory stack too far.";
+
+    var sub = this.stack.shift();
+    var main = this.stack[0];
+
+    main.start = main.start.concat(sub.start);
+    main.end   = main.end.concat(sub.end);
   },
 
   end: function () {
     var graph = this.graph;
 
     this.graph = new $.Graph();
-    this._start = null;
-    this._end = null;
+    this.stack = [];
+    this.group();
 
     return graph;
   }//,

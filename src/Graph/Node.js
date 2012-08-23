@@ -3,29 +3,29 @@
 /**
  * Node in shader graph.
  */
-$.Node = function (delegate, outlets) {
+$.Node = function (owner, outlets) {
   this.graph = null;
   this.in = [];
   this.out = [];
   this._outlets = {};
 
-  this.delegate(delegate);
+  this.owner(owner);
   this.outlets(outlets);
 };
 
 $.Node.prototype = {
 
   // Set/get object represented by the node.
-  delegate: function (delegate) {
-    if (delegate !== undefined) {
+  owner: function (owner) {
+    if (owner !== undefined) {
       // Setter
-      this._delegate = delegate;
+      this._owner = owner;
 
       // Chain
       return this;
     }
     // Getter
-    return this._delegate;
+    return this._owner;
   },
 
   // Notify: become part of the given graph
@@ -162,7 +162,7 @@ $.Node.prototype = {
     _.each(node.in, function (outlet) {
       // Match outlets by type/name hint, then type/position key.
       var match = outlet.type,
-          hint = [match, outlet.name].join('-'),
+          hint = [match, outlet.hint].join('-'),
           count = track(match),
           key = [match, count].join('-');
 
@@ -175,7 +175,7 @@ $.Node.prototype = {
     _.each(this.out, function (outlet) {
       // Match outlets by type and name.
       var match = outlet.type,
-          hint = [match, outlet.name].join('-');
+          hint = [match, outlet.hint].join('-');
 
       // Connect if found.
       if (hints[hint]) {

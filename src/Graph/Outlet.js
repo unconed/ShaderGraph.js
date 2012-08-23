@@ -1,15 +1,18 @@
 (function ($) {
 $.Outlets = 0;
 
-$.Outlet = function (inout, name, type, category, exposed, meta) {
+$.Outlet = function (inout, name, hint, type, category, exposed, meta) {
+
+  // Object constructor syntax
   if (typeof inout == 'object') {
     var object = inout;
-    return new $.Outlet(object.inout, object.name, object.type, object.category, object.exposed);
+    return new $.Outlet(object.inout, object.name, object.hint, object.type, object.category, object.exposed);
   }
 
   this.node     = null;
   this.inout    = inout;
   this.name     = name;
+  this.hint     = hint || name;
   this.type     = type;
   this.category = category;
   this.exposed  = !!exposed;
@@ -21,14 +24,17 @@ $.Outlet = function (inout, name, type, category, exposed, meta) {
 };
 
 $.Outlet.prototype = {
+  // Unique ID for this outlet.
   id: function () {
     return ['', this.name, this.index].join('__');
   },
 
+  // Set exposed flag
   expose: function (exposed) {
     this.exposed = exposed;
   },
 
+  // Change into given outlet without touching connections.
   morph: function (outlet) {
     this.inout    = outlet.inout;
     this.name     = outlet.name;
@@ -88,6 +94,7 @@ $.Outlet.prototype = {
     }
   },
 
+  // Link to given node.
   link: function (node) {
     this.node = node;
   }//,

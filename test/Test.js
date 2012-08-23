@@ -26,10 +26,6 @@ Test = function () {
     report();
   }
 
-  function assertEqual(a, b, message) {
-    assert(a == b, message);
-  }
-
   function report() {
     document.body.innerHTML = asserts.join('<br>');
   }
@@ -45,7 +41,7 @@ Test = function () {
       context = i;
       ++t;
       try {
-        Test.Tests[i](function () {
+        Test.Tests[i](assert, function () {
           if (--t == 0) {
             done();
           }
@@ -56,15 +52,13 @@ Test = function () {
         if (--t == 0) {
           done();
         }
+        throw e;
       }
     }
     if (--t == 0) {
       done();
     }
   }
-
-  window.assert = assert;
-  window.assertEqual = assertEqual;
 
   run();
 };

@@ -1,6 +1,6 @@
 (function ($) {
 
-Test.Tests.Graph = function (done) {
+Test.Tests.Graph = function (assert, done) {
 
   // Test node auto-connect
   var graph = new ShaderGraph.Graph();

@@ -68,10 +68,11 @@ $.Snippet.prototype = {
     });
 
     // Insert new signature into body
-    var body = this.body.replace(/void\s+main\([^\)]*\)/g, ['void', name, '(', signature.join(', '), ')'].join(' '));
+    var body = this.body.replace(/\s*void\s+([A-Za-z0-9]+)\s*\([^\)]*\)/g, ['void', name + '(', signature.join(', '), ')'].join(' '));
 
     // Assemble code
-    return header.join(';\n') +';\n'+ body;
+    header.push(body);
+    return header.join(';\n')
   },
 
   arguments: function () {
@@ -155,7 +156,7 @@ $.Snippet.prototype = {
       };
 
       this.parameters.push({
-        inout: inout || 'in',
+        inout: inouts[inout || 'in'],
         name: name,
         type: this.type(type, array),
         signature: signature//,
@@ -164,11 +165,10 @@ $.Snippet.prototype = {
   },
 
   parseCode: function (code) {
-    var regexp;
-
-    function findAll(re) {
+    function findAll(re, string) {
+      if (!re.global) throw "Can't findAll non-global regexp";
       var match, all = [];
-      while (match = re.exec(code)) {
+      while (match = re.exec(string)) {
         all.push(match);
       };
       return all;
@@ -178,10 +178,10 @@ $.Snippet.prototype = {
     code = code.replace(/\r\n?/g, '\n').replace(/\/\/[^\n]*\n/g, ' ').replace(/\/\*(.|\n)*?\*\//g, ' ');
 
     // Find all attributes/uniforms/varying + function signature
-    var attributes = findAll(/(?:^|;)\s*attribute\s+(([A-Za-z0-9]+)\s+([A-Za-z0-9_]+)\s*(?:\[([^\]]+)\])?)(?:$|(?=;))/g);
-    var uniforms = findAll(/(?:^|;)\s*uniform\s+(([A-Za-z0-9]+)\s+([A-Za-z0-9_]+)\s*(?:\[([^\]]+)\])?)(?:$|(?=;))/g);
-    var varyings = findAll(/(?:^|;)\s*varying\s+(([A-Za-z0-9]+)\s+([[A-Za-z0-9_]+)\s*(?:\[([^\]]+)\])?)(?:$|(?=;))/g);
-    var signature = findAll(/(?:^|;)\s*void\s+([A-Za-z0-9]+)\s*\(([^\)]*)\)\s*{/g);
+    var attributes = findAll(/(?:^|;)\s*attribute\s+(([A-Za-z0-9]+)\s+([A-Za-z0-9_]+)\s*(?:\[([^\]]+)\])?)(?:$|(?=;))/g, code);
+    var uniforms = findAll(/(?:^|;)\s*uniform\s+(([A-Za-z0-9]+)\s+([A-Za-z0-9_]+)\s*(?:\[([^\]]+)\])?)(?:$|(?=;))/g, code);
+    var varyings = findAll(/(?:^|;)\s*varying\s+(([A-Za-z0-9]+)\s+([[A-Za-z0-9_]+)\s*(?:\[([^\]]+)\])?)(?:$|(?=;))/g, code);
+    var signature = findAll(/(?:^|;)\s*void\s+([A-Za-z0-9]+)\s*\(([^\)]*)\)\s*{/g, code);
 
     if (!signature[0]) throw "Could not parse shader snippet. Must contain a void-returning function with in/outs: " + code;
 
@@ -198,6 +198,7 @@ $.Snippet.prototype = {
         body = body.replace(item[0], '');
       }.bind(this));
     }.bind(this));
+    body = body.replace(/^\s*;/, '');
 
     // Process function signature.
     this.parseSignature(signature[0]);
