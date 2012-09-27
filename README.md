@@ -7,7 +7,7 @@ ShaderGraph is an experimental library for building GLSL shaders (aimed at, but 
 
 ShaderGraph is experimental and was written to solve a problem I had in several projects: I needed to combine shader-based effects in various combinations on the fly, and couldn't get away with simply concatenating static pieces of code.
 
-This is more of a proof of concept rather than a robust library, but maybe you'll have some fun with it.
+This is really just a proof of concept rather than anything robust. Expect it to change.
 
 ---
 
