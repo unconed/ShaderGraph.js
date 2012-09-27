@@ -1,7 +1,7 @@
 ShaderGraph.js
 ==========
 
-![ShaderGraph.js](https://raw.github.com/unconed/ShaderGraph.js/master/misc/ShaderGraph.png)
+![ShaderGraph.js](https://raw.github.com/unconed/ShaderGraph.js/master/misc/nodes.png)
 
 ShaderGraph is an experimental library for building GLSL shaders (aimed at, but not dependent on, Three.js). It lets you build shaders with lego-like blocks of GLSL code, exposed as nodes in a graph. Nodes are wired up via outlets in a typical data-flow style.
 
