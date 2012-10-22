@@ -30,7 +30,7 @@ var graph = factory
             .end();
 
 // Compile material
-var material = graph.tail().owner().compile();
+var material = graph.compile();
 ```
 
 Graphs do not have to be linear and can include parallel tracks and branches:
@@ -126,6 +126,10 @@ Nodes can have any number of outlets, and they can be manually connected as well
 We compile the final material by finding the last node in the graph, looking up its attached material and invoking `.compile()`.
 
 ```
+// Shorthand
+var program = graph.compile();
+
+// Long way, graph traversal
 var end = graph.tail();
 var material = end.owner();
 var program = material.compile();

@@ -91,9 +91,7 @@ Test.Tests.Factory = function (assert, done) {
   var tt = +new Date();
 
   // Compile material from final node
-  var end = graph.tail();
-  var material = end.owner();
-  var program = material.compile();
+  var program = graph.compile();
   var main, matches;
   assert(program.uniforms, "Compiled uniforms");
   assert(program.vertexShader != '', "Compiled vertexShader");

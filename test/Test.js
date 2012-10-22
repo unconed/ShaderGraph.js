@@ -7,13 +7,11 @@ Test = function () {
     run: 0,
   };
 
-  var context = '';
-
   var asserts = [];
   var yes = '<span style="color: rgb(40, 180, 0);">✔</span> ';
   var no = '<span style="color: rgb(180, 0, 0);">✘</span> '
 
-  function assert(bool, message) {
+  function assert(bool, message, context) {
     if (bool) stats.pass++;
     if (!bool) stats.fail++;
     stats.run++;
@@ -27,7 +25,7 @@ Test = function () {
   }
 
   function report() {
-    document.body.innerHTML = asserts.join('<br>');
+    document.getElementById('test-output').innerHTML = asserts.join('<br>');
   }
 
   function done() {
@@ -38,24 +36,28 @@ Test = function () {
 
   function run() {
     var t = 1;
-    for (i in Test.Tests) {
-      context = i;
+    for (i in Test.Tests) (function (test, context) {
       ++t;
       try {
-        Test.Tests[i](assert, function () {
-          if (--t == 0) {
-            done();
-          }
-        });
+        test(
+          function (b, m) {
+            return assert(b, m, context);
+          },
+          function () {
+            if (--t == 0) {
+              done();
+            }
+          });
       }
       catch (e) {
-        assert(false, 'Exception: ' + e);
+        assert(false, 'Exception: ' + e, context);
         if (--t == 0) {
           done();
         }
         throw e;
       }
-    }
+    })(Test.Tests[i], i);
+
     if (--t == 0) {
       done();
     }

@@ -101,6 +101,13 @@ $.Factory.prototype = {
     this.stack = [];
     this.group();
 
+    // Add compile shortcut.
+    if (graph) {
+      graph.compile = function () {
+        return graph.tail().owner().compile();
+      };
+    }
+
     return graph;
   }//,
 };

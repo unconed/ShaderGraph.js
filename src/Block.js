@@ -100,7 +100,7 @@ $.Block.Material.prototype = _.extend({}, $.Block.prototype, {
   },
 
   fetch: function (program, phase, outlet, priority) {
-    // Ensure code is included in program.
+    // Ensure code is included only once in program.
     if (!program.include(this, phase)) {
       this.insert(program, phase, priority);
     }
