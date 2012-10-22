@@ -174,7 +174,7 @@ vec3 __color__21 ;
 __fragmentmain4(__color__21);
 __fragmentmain5(__colorOut__23,__color__21);
 __fragmentmain6(__colorOut__23);
-} Factory.test.js:91
+}
 ```
 
 The snippets are included as library functions with altered signatures, and a main() function has been created to call the snippets in the right order and pass values around.
