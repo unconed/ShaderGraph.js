@@ -51,6 +51,28 @@ Test.Tests.Factory = function (assert, done) {
     '}',
   ].join("\n");
 
+  var concatSplit = [
+    '// Split',
+    'void main(out vec3 positionA, out vec3 positionB) {',
+    '  positionA = position;',
+    '  positionB = position;',
+    '}',
+  ].join("\n");
+
+  var concatPass = [
+    '// Split',
+    'void main(in vec3 positionIn, out vec3 positionOut) {',
+    '  positionOut = positionIn;',
+    '}',
+  ].join("\n");
+
+  var concatJoin = [
+    '// Join',
+    'void main(in vec3 positionA, in vec3 positionB) {',
+    '}',
+  ].join("\n");
+
+
   // Test static creation methods
   var node1 = new ShaderGraph.Block.Snippet(fragment1).node();
   var node2 = new ShaderGraph.Block.Snippet(fragment2).node();
@@ -88,8 +110,6 @@ Test.Tests.Factory = function (assert, done) {
   // Check graph outputs
   var outputs = graph.outputs();
   assert(outputs.length == 0, 'Graph has 0 outputs');
-
-  var tt = +new Date();
 
   // Compile material from final node
   var program = graph.compile();
@@ -130,6 +150,27 @@ Test.Tests.Factory = function (assert, done) {
   console.log(program.attributes);
   console.log(program.vertexShader);
   console.log(program.fragmentShader);
+
+
+  // Test concat creation methods
+  // split -> pass -> join
+  //       \- pass -/
+  var factory = new ShaderGraph.Factory();
+  var graph = factory
+    .snippet(concatSplit)
+    .group()
+      .group()
+        .snippet(concatPass)
+      .next()
+        .snippet(concatPass)
+      .combine()
+    .concat()
+    .snippet(concatJoin)
+    .end();
+  assert(graph.nodes.length == 4, 'Concat/chain creation of 4 nodes');
+  assert(graph.inputs().length == 0, 'Graph has no open inputs');
+  assert(graph.outputs().length == 0, 'Graph has no open outputs');
+  assert(graph.nodes[0].getOut('positionA').output[0].node !== graph.nodes[0].getOut('positionB').output[0].node, 'Split node connects to two different nodes');
 
   done();
 };

@@ -39,7 +39,7 @@ $.Factory.prototype = {
   },
 
   append: function (node) {
-    this.graph.add(node);
+    if (!node.graph) this.graph.add(node);
 
     var context = this.stack[0];
 
@@ -55,7 +55,7 @@ $.Factory.prototype = {
   },
 
   prepend: function (node) {
-    this.graph.add(node);
+    if (!node.graph) this.graph.add(node);
 
     var context = this.stack[0];
 
@@ -78,6 +78,22 @@ $.Factory.prototype = {
 
   next: function () {
     this.combine().group();
+
+    return this;
+  },
+
+  concat: function () {
+    if (this.stack.length <= 1) throw "Popping factory stack too far.";
+
+    var sub = this.stack.shift();
+    var main = this.stack[0];
+
+    _.each(sub.start, function (to) {
+      _.each(main.end, function (from) {
+        from.connect(to, true);
+      });
+    });
+    main.end = sub.end;
 
     return this;
   },

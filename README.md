@@ -48,9 +48,26 @@ var graph = factory
 
 This will chain `fragment1` and `fragment2`, and connect both `fragment2` and `vertex1` to the final material node.
 
-Chains of snippets are built with the `.snippet()` call. Chains are built in parallel using `.group()` to begin a new sub chain, `.combine()` to merge a subchain into its parent, and `.next()` as a shortcut for `.combine().group()`.
+Chains of snippets are built with the `.snippet()` call. Chains are built in parallel using `.group()` to begin a new sub chain, `.combine()` to merge a subchain into its parent, and `.next()` as a shortcut for `.combine().group()`. To combine chains serially instead of parallel, use `.combine()`, for example:
 
-At the same time, ShaderGraph provides a clean internal separation between the data structure (the graph and its nodes) and the shader/compilation logic (the logical building blocks, i.e. snippets and materials). This means ShaderGraph can in theory be extended to include more than just raw GLSL nodes, and could be part of a bigger 'data flow programming' style framework in the future.
+```
+var graph = factory
+            .snippet('split')
+            .group()
+              .group()
+                .snippet('top')
+              .next()
+                .snippet('bottom')
+              .combine()
+            .concat()
+            .snippet('join')
+            ...
+            .end();
+```
+
+This graph has one snippet 'split' connecting to two in parallel ('top', 'bottom'), which each connect back to one ('join').
+
+Finally, note that ShaderGraph provides a clean internal separation between the data structure (the graph and its nodes) and the shader/compilation logic (the logical building blocks, i.e. snippets and materials). This means ShaderGraph can in theory be extended to include more than just raw GLSL nodes, and could be part of a bigger 'data flow programming' style framework in the future.
 
 How it works
 -------

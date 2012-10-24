@@ -144,7 +144,7 @@ $.Node.prototype = {
   },
 
   // Connect to the target node by matching up inputs and outputs.
-  connect: function (node) {
+  connect: function (node, empty, force) {
     var outlets = {},
         hints = {},
         counters;
@@ -160,6 +160,11 @@ $.Node.prototype = {
     // Build hash keys of target outlets.
     reset();
     _.each(node.inputs, function (outlet) {
+      // Only autoconnect if not already connected.
+      if (!force && outlet.input) {
+        return;
+      }
+
       // Match outlets by type/name hint, then type/position key.
       var match = outlet.type,
           hint = [match, outlet.hint].join('-'),
@@ -173,6 +178,9 @@ $.Node.prototype = {
     // Build hash keys of source outlets.
     reset();
     _.each(this.outputs, function (outlet) {
+      // Ignore this outlet if only matching empties.
+      if (empty && outlet.output.length) return;
+
       // Match outlets by type and name.
       var match = outlet.type,
           hint = [match, outlet.hint].join('-');
