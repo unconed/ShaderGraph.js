@@ -159,15 +159,13 @@ Test.Tests.Factory = function (assert, done) {
   var graph = factory
     .snippet(concatSplit)
     .group()
-      .group()
-        .snippet(concatPass)
-      .next()
-        .snippet(concatPass)
-      .combine()
-    .concat()
+      .snippet(concatPass)
+    .next()
+      .snippet(concatPass)
+    .combine()
     .snippet(concatJoin)
     .end();
-  assert(graph.nodes.length == 4, 'Concat/chain creation of 4 nodes');
+  assert(graph.nodes.length == 4, 'Split/join creation of 4 nodes');
   assert(graph.inputs().length == 0, 'Graph has no open inputs');
   assert(graph.outputs().length == 0, 'Graph has no open outputs');
   assert(graph.nodes[0].getOut('positionA').output[0].node !== graph.nodes[0].getOut('positionB').output[0].node, 'Split node connects to two different nodes');
