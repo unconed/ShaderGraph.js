@@ -215,7 +215,7 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
         var owner = outlet.input.node.owner();
 
         var variable = owner.fetch(program, phase, outlet.input, priority + 1);
-        program.variable(phase, variable, arg.type);
+        program.variable(phase, variable, arg);
         args.push(variable);
       }
       else {
@@ -225,7 +225,7 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
     }
     else if (arg.inout == $.OUT) {
       var variable = outlet.id();
-      program.variable(phase, variable, arg.type);
+      program.variable(phase, variable, arg);
       args.push(variable);
     }
   });
@@ -240,24 +240,29 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
       var owner = outlet.input.node.owner();
 
       var variable = owner.fetch(program, phase, outlet.input, priority + 1);
-      program.variable(phase, variable, arg.type);
+      program.variable(phase, variable, arg);
       args.push(variable);
       replaced.push(arg.name);
     }
     // Pass through uniform
     else {
-      program.external('uniform', arg.name, arg.type, arg.value);
+      program.external('uniform', arg);
     }
   });
 
   // Add attributes
   _.each(signature.attributes, function (arg) {
-    program.external('attribute', arg.name, arg.type);
+    program.external('attribute', arg);
+  });
+
+  // Add varyings
+  _.each(signature.varyings, function (arg) {
+    program.external('varying', arg);
   });
 
   // Compile snippet and add to program.
   var name = ['', 'sg', phase, snippet.name, node.owner().index ].join('_');
-  var code = snippet.compile(name, replaced);
+  var code = snippet.compile(name, replaced, true);
   program.add(phase, name, args, code, priority);
 };
 
@@ -435,12 +440,14 @@ $.Program.prototype = {
     return false;
   },
 
-  external: function (category, name, type, value) {
-    this.externals[name] = { category: category, name: name, type: type, value: value };
+  external: function (category, arg) {
+    arg.category = category;
+    this.externals[arg.name] = arg;
   },
 
-  variable: function (phase, name, type) {
-    this.variables[phase][name] = { name: name, type: type };
+  variable: function (phase, name, arg) {
+    arg.name = name;
+    this.variables[phase][name] = arg;
   },
 
   add: function (phase, name, args, code, priority) {
@@ -454,7 +461,7 @@ $.Program.prototype = {
   },
 
   compile: function () {
-    // Prepare uniforms
+    // Prepare uniform/attribute definitions for Three.js
     _.each(this.externals, function (e) {
       if (e.category == 'uniform') {
         this.uniforms[e.name] = {
@@ -473,8 +480,19 @@ $.Program.prototype = {
     // Prepare vertex and fragment bodies.
     _.each([ 'vertex', 'fragment' ], function (phase) {
 
+      // Build combined header without redundant definitions.
+      var header = [];
+      _.each(this.externals, function (e) {
+        // Exclude vertex attributes from fragment shader.
+        if (e.category == 'attribute' && phase == 'fragment') return;
+
+        // Add definition
+        header.push([e.category, e.signature, ';'].join(' '));
+      }.bind(this));
+      header = header.join("\n");
+
       var sorted = _.toArray(this.calls[phase]);
-      var library = [];
+      var library = [ header ];
 
       // Start main function.
       var main = [ 'void main() {'];
@@ -555,7 +573,7 @@ $.Snippet.defaults = {
 
 $.Snippet.prototype = {
 
-  compile: function (name, replaced) {
+  compile: function (name, replaced, bodyOnly) {
     // Build updated function signature.
     var signature = this.signature.slice();
     var header = [];
@@ -566,18 +584,18 @@ $.Snippet.prototype = {
       if (replaced.indexOf(item.name) >= 0) {
         signature.push(item.signature);
       }
-      else {
+      else if (!bodyOnly) {
         header.push(['uniform', item.signature].join(' '));
       }
     });
 
     // Prepare attributes
-    _.each(this.attributes, function (item) {
+    !bodyOnly && _.each(this.attributes, function (item) {
       header.push(['attribute', item.signature].join(' '));
     });
 
     // Prepare varyings
-    _.each(this.varyings, function (item) {
+    !bodyOnly && _.each(this.varyings, function (item) {
       header.push(['varying', item.signature].join(' '));
     });
 
@@ -592,6 +610,7 @@ $.Snippet.prototype = {
   arguments: function () {
     return {
       uniforms: this.uniforms,
+      varyings: this.varyings,
       attributes: this.attributes,
       parameters: this.parameters//,
     };
