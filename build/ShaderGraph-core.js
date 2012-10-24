@@ -272,7 +272,7 @@ $.Factory.prototype = {
   },
 
   append: function (node) {
-    this.graph.add(node);
+    if (!node.graph) this.graph.add(node);
 
     var context = this.stack[0];
 
@@ -288,7 +288,7 @@ $.Factory.prototype = {
   },
 
   prepend: function (node) {
-    this.graph.add(node);
+    if (!node.graph) this.graph.add(node);
 
     var context = this.stack[0];
 
@@ -311,6 +311,22 @@ $.Factory.prototype = {
 
   next: function () {
     this.combine().group();
+
+    return this;
+  },
+
+  concat: function () {
+    if (this.stack.length <= 1) throw "Popping factory stack too far.";
+
+    var sub = this.stack.shift();
+    var main = this.stack[0];
+
+    _.each(sub.start, function (to) {
+      _.each(main.end, function (from) {
+        from.connect(to, true);
+      });
+    });
+    main.end = sub.end;
 
     return this;
   },
@@ -918,7 +934,7 @@ $.Node.prototype = {
   },
 
   // Connect to the target node by matching up inputs and outputs.
-  connect: function (node) {
+  connect: function (node, empty, force) {
     var outlets = {},
         hints = {},
         counters;
@@ -934,6 +950,11 @@ $.Node.prototype = {
     // Build hash keys of target outlets.
     reset();
     _.each(node.inputs, function (outlet) {
+      // Only autoconnect if not already connected.
+      if (!force && outlet.input) {
+        return;
+      }
+
       // Match outlets by type/name hint, then type/position key.
       var match = outlet.type,
           hint = [match, outlet.hint].join('-'),
@@ -947,6 +968,9 @@ $.Node.prototype = {
     // Build hash keys of source outlets.
     reset();
     _.each(this.outputs, function (outlet) {
+      // Ignore this outlet if only matching empties.
+      if (empty && outlet.output.length) return;
+
       // Match outlets by type and name.
       var match = outlet.type,
           hint = [match, outlet.hint].join('-');
