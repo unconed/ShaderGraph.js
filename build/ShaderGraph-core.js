@@ -304,22 +304,33 @@ $.Factory.prototype = {
   },
 
   group: function () {
+    // Inner var holds working state, outer var holds accumulated state.
+    this.stack.unshift({ start: [], end: [] });
     this.stack.unshift({ start: [], end: [] });
 
     return this;
   },
 
   next: function () {
-    this.combine().group();
+    var sub = this.stack.shift();
+    var main = this.stack[0];
+
+    main.start = main.start.concat(sub.start);
+    main.end   = main.end.concat(sub.end);
+
+    this.stack.unshift({ start: [], end: [] });
 
     return this;
   },
 
-  concat: function () {
-    if (this.stack.length <= 1) throw "Popping factory stack too far.";
+  combine: function () {
+    if (this.stack.length <= 2) throw "Popping factory stack too far.";
 
-    var sub = this.stack.shift();
-    var main = this.stack[0];
+    this.next();
+    this.stack.shift();
+
+    var sub = this.stack.shift(),
+        main = this.stack[0];
 
     _.each(sub.start, function (to) {
       _.each(main.end, function (from) {
@@ -327,18 +338,6 @@ $.Factory.prototype = {
       });
     });
     main.end = sub.end;
-
-    return this;
-  },
-
-  combine: function () {
-    if (this.stack.length <= 1) throw "Popping factory stack too far.";
-
-    var sub = this.stack.shift();
-    var main = this.stack[0];
-
-    main.start = main.start.concat(sub.start);
-    main.end   = main.end.concat(sub.end);
 
     return this;
   },
