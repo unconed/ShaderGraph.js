@@ -250,6 +250,11 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
     }
   });
 
+  // Add attributes
+  _.each(signature.attributes, function (arg) {
+    program.external('attribute', arg.name, arg.type);
+  });
+
   // Compile snippet and add to program.
   var name = ['', 'sg', phase, snippet.name, node.owner().index ].join('_');
   var code = snippet.compile(name, replaced);
@@ -386,6 +391,7 @@ $.Program = function () {
   this.externals = {};
 
   this.compiled = false;
+  this.attributes = {};
   this.uniforms = {};
   this.vertexShader = '';
   this.fragmentShader = '';
@@ -439,6 +445,12 @@ $.Program.prototype = {
         this.uniforms[e.name] = {
           type: e.type,
           value: e.value//,
+        };
+      }
+      if (e.category == 'attribute') {
+        this.attributes[e.name] = {
+          type: e.type,
+          value: []//,
         };
       }
     }.bind(this));
@@ -565,6 +577,7 @@ $.Snippet.prototype = {
   arguments: function () {
     return {
       uniforms: this.uniforms,
+      attributes: this.attributes,
       parameters: this.parameters//,
     };
   },
