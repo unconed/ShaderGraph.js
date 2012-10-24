@@ -35,7 +35,7 @@ this._chain)}});j(["concat","join","slice"],function(a){var b=k[a];m.prototype[a
 
 // Check dependencies.
 (function (deps) {
-  for (i in deps) {
+  for (var i in deps) {
     if (!window[i]) throw "Error: ShaderGraph requires " + deps[i];
   }
 })({
