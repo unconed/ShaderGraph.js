@@ -3,7 +3,7 @@
  */
 
 // Check dependencies.
-(function (deps) {
+;(function (deps) {
   for (var i in deps) {
     if (!window[i]) throw "Error: ShaderGraph requires " + deps[i];
   }
