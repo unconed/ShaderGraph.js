@@ -140,18 +140,18 @@ The returned program object has `uniforms`, `vertexShader` and `fragmentShader` 
 The shaders for the example above look like this when compiled:
 ```
 // Vertex Shader
-void __vertexmain6(  ) {
+void _sg_vertex_main_6(  ) {
   gl_Position = projectionMatrix *
                 modelViewMatrix *
                 vec4(position, 1.0);
 }
 varying vec2 vUV;
-void __vertexmain4(  ) {
+void _sg_vertex_main_4(  ) {
   vUV = uv;
 }
 void main() {
-__vertexmain6();
-__vertexmain4();
+_sg_vertex_main_6();
+_sg_vertex_main_4();
 }
 ```
 
@@ -159,21 +159,21 @@ __vertexmain4();
 // Fragment Shader
 uniform sampler2D texture;
 varying vec2 vUV;
-void __fragmentmain4( out vec3 color ) {
+void _sg_fragment_main_4( out vec3 color ) {
   color = texture2D(texture, vUV);
 }
-void __fragmentmain5( out vec3 colorOut, vec3 colorIn ) {
+void _sg_fragment_main_5( out vec3 colorOut, vec3 colorIn ) {
   colorOut = colorIn - vec3(1.0/255.0, 1.0/255.0, 1.0/255.0);
 }
-void __fragmentmain6( vec3 color ) {
+void _sg_fragment_main_6( vec3 color ) {
   gl_FragColor = color;
 }
 void main() {
-vec3 __colorOut__23 ;
-vec3 __color__21 ;
-__fragmentmain4(__color__21);
-__fragmentmain5(__colorOut__23,__color__21);
-__fragmentmain6(__colorOut__23);
+vec3 _sg_colorOut_23 ;
+vec3 _sg_color_21 ;
+__fragmentmain4(_sg_color_21);
+__fragmentmain5(_sg_colorOut_23,_sg_color_21);
+__fragmentmain6(_sg_colorOut_23);
 }
 ```
 
