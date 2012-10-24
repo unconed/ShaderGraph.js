@@ -78,5 +78,11 @@ Test.Tests.Snippet = function (assert, done) {
   assert(!call.match(/,\s*(in?)\s*float\s*uf/), 'Float argument added');
   assert(!call.match(/,\s*(in?)\s*float\s*ufv1\[3\]/), 'Float array argument added');
 
+  var call = snippet.compile('snippetRename', ['uf', 'ufv1'], true);
+  assert(call.match(/gl_FragColor\s*=\s*v4in.xyz\s*;/), 'Shader body preserved (body only)');
+  assert(!call.match(/uniform/), 'All uniforms removed');
+  assert(!call.match(/attribute/), 'All attributes removed');
+  assert(!call.match(/varying/), 'All varyings removed');
+
   done();
 };

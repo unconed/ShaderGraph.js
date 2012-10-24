@@ -41,7 +41,7 @@ $.Snippet.defaults = {
 
 $.Snippet.prototype = {
 
-  compile: function (name, replaced) {
+  compile: function (name, replaced, bodyOnly) {
     // Build updated function signature.
     var signature = this.signature.slice();
     var header = [];
@@ -52,18 +52,18 @@ $.Snippet.prototype = {
       if (replaced.indexOf(item.name) >= 0) {
         signature.push(item.signature);
       }
-      else {
+      else if (!bodyOnly) {
         header.push(['uniform', item.signature].join(' '));
       }
     });
 
     // Prepare attributes
-    _.each(this.attributes, function (item) {
+    !bodyOnly && _.each(this.attributes, function (item) {
       header.push(['attribute', item.signature].join(' '));
     });
 
     // Prepare varyings
-    _.each(this.varyings, function (item) {
+    !bodyOnly && _.each(this.varyings, function (item) {
       header.push(['varying', item.signature].join(' '));
     });
 
@@ -78,6 +78,7 @@ $.Snippet.prototype = {
   arguments: function () {
     return {
       uniforms: this.uniforms,
+      varyings: this.varyings,
       attributes: this.attributes,
       parameters: this.parameters//,
     };

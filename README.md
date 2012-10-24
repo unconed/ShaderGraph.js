@@ -22,7 +22,7 @@ The graph is terminated by a material node with no outputs. The final shaders ar
 
 ShaderGraph provides a simple factory API for quick usage:
 ```
-// Build graph of two snippets + material
+// Build serial graph of two snippets + material
 var graph = factory
             .snippet(code1)
             .snippet(code2)
@@ -36,6 +36,9 @@ var material = graph.compile();
 Graphs do not have to be linear and can include parallel tracks and branches:
 
 ```
+// Split ->  Top   -> Join
+//       -> Bottom ->
+
 var graph = factory
             .snippet('split')
             .group()
@@ -50,9 +53,7 @@ var graph = factory
 
 This graph has one snippet 'split' connecting to two in parallel ('top', 'bottom'), which each connect back to one ('join').
 
-Chains of snippets are built with the `.snippet()` call. Chains are built in parallel using `.group()` to start, then `.next()` to begin a new parallel chain inside that group, and .combine to append to the parent chain.
-
-
+Chains of snippets are built with the `.snippet()` call. Chains are built in parallel using `.group()` to start, then `.next()` to begin a new parallel chain inside that group, and `.combine()` to append the entire group to the parent chain.
 
 Finally, note that ShaderGraph provides a clean internal separation between the data structure (the graph and its nodes) and the shader/compilation logic (the logical building blocks, i.e. snippets and materials). This means ShaderGraph can in theory be extended to include more than just raw GLSL nodes, and could be part of a bigger 'data flow programming' style framework in the future.
 

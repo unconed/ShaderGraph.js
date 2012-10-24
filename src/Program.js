@@ -40,12 +40,14 @@ $.Program.prototype = {
     return false;
   },
 
-  external: function (category, name, type, value) {
-    this.externals[name] = { category: category, name: name, type: type, value: value };
+  external: function (category, arg) {
+    arg.category = category;
+    this.externals[arg.name] = arg;
   },
 
-  variable: function (phase, name, type) {
-    this.variables[phase][name] = { name: name, type: type };
+  variable: function (phase, name, arg) {
+    arg.name = name;
+    this.variables[phase][name] = arg;
   },
 
   add: function (phase, name, args, code, priority) {
@@ -59,7 +61,7 @@ $.Program.prototype = {
   },
 
   compile: function () {
-    // Prepare uniforms
+    // Prepare uniform/attribute definitions for Three.js
     _.each(this.externals, function (e) {
       if (e.category == 'uniform') {
         this.uniforms[e.name] = {
@@ -78,8 +80,19 @@ $.Program.prototype = {
     // Prepare vertex and fragment bodies.
     _.each([ 'vertex', 'fragment' ], function (phase) {
 
+      // Build combined header without redundant definitions.
+      var header = [];
+      _.each(this.externals, function (e) {
+        // Exclude vertex attributes from fragment shader.
+        if (e.category == 'attribute' && phase == 'fragment') return;
+
+        // Add definition
+        header.push([e.category, e.signature, ';'].join(' '));
+      }.bind(this));
+      header = header.join("\n");
+
       var sorted = _.toArray(this.calls[phase]);
-      var library = [];
+      var library = [ header ];
 
       // Start main function.
       var main = [ 'void main() {'];

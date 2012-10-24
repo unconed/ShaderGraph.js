@@ -164,7 +164,7 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
         var owner = outlet.input.node.owner();
 
         var variable = owner.fetch(program, phase, outlet.input, priority + 1);
-        program.variable(phase, variable, arg.type);
+        program.variable(phase, variable, arg);
         args.push(variable);
       }
       else {
@@ -174,7 +174,7 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
     }
     else if (arg.inout == $.OUT) {
       var variable = outlet.id();
-      program.variable(phase, variable, arg.type);
+      program.variable(phase, variable, arg);
       args.push(variable);
     }
   });
@@ -189,24 +189,29 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
       var owner = outlet.input.node.owner();
 
       var variable = owner.fetch(program, phase, outlet.input, priority + 1);
-      program.variable(phase, variable, arg.type);
+      program.variable(phase, variable, arg);
       args.push(variable);
       replaced.push(arg.name);
     }
     // Pass through uniform
     else {
-      program.external('uniform', arg.name, arg.type, arg.value);
+      program.external('uniform', arg);
     }
   });
 
   // Add attributes
   _.each(signature.attributes, function (arg) {
-    program.external('attribute', arg.name, arg.type);
+    program.external('attribute', arg);
+  });
+
+  // Add varyings
+  _.each(signature.varyings, function (arg) {
+    program.external('varying', arg);
   });
 
   // Compile snippet and add to program.
   var name = ['', 'sg', phase, snippet.name, node.owner().index ].join('_');
-  var code = snippet.compile(name, replaced);
+  var code = snippet.compile(name, replaced, true);
   program.add(phase, name, args, code, priority);
 };
 
