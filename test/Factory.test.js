@@ -10,6 +10,7 @@ Test.Tests.Factory = function (assert, done) {
 
   var vertex1 = [
     '// Provide varying UV coordinates',
+    'attribute float magic;',
     'varying vec2 vUV;',
     'void main() {',
     '  vUV = uv;',
@@ -98,9 +99,14 @@ Test.Tests.Factory = function (assert, done) {
   assert(program.fragmentShader != '', "Compiled fragmentShader");
 
   // Test uniforms
+  assert(program.uniforms, "Uniforms exported");
   assert(program.uniforms.texture, "Texture uniform exported");
   assert(!program.uniforms.color, "Color uniform removed");
   assert(!program.uniforms.colorIn, "ColorIn uniform removed");
+
+  // Test attributes
+  assert(program.attributes, "Attributes exported");
+  assert(program.attributes.magic, "Magic attribute exported");
 
   // Test vertex shader
   main = program.vertexShader.split(/void\s+main\(\s*\)/)[1];
@@ -121,6 +127,7 @@ Test.Tests.Factory = function (assert, done) {
   assert(matches && matches.length == 3, "Fragment main has 3 calls");
 
   console.log(program.uniforms);
+  console.log(program.attributes);
   console.log(program.vertexShader);
   console.log(program.fragmentShader);
 

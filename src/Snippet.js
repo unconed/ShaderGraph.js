@@ -78,6 +78,7 @@ $.Snippet.prototype = {
   arguments: function () {
     return {
       uniforms: this.uniforms,
+      attributes: this.attributes,
       parameters: this.parameters//,
     };
   },

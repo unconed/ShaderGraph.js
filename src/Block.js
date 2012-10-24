@@ -199,6 +199,11 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
     }
   });
 
+  // Add attributes
+  _.each(signature.attributes, function (arg) {
+    program.external('attribute', arg.name, arg.type);
+  });
+
   // Compile snippet and add to program.
   var name = ['', 'sg', phase, snippet.name, node.owner().index ].join('_');
   var code = snippet.compile(name, replaced);
