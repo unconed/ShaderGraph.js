@@ -151,7 +151,7 @@ $.Block.Material.prototype = _.extend({}, $.Block.prototype, {
   },
 
   fetch: function (program, phase, outlet, priority) {
-    // Ensure code is included in program.
+    // Ensure code is included only once in program.
     if (!program.include(this, phase)) {
       this.insert(program, phase, priority);
     }
@@ -251,7 +251,7 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
   });
 
   // Compile snippet and add to program.
-  var name = ['__', phase, snippet.name, node.owner().index ].join('');
+  var name = ['', 'sg', phase, snippet.name, node.owner().index ].join('_');
   var code = snippet.compile(name, replaced);
   program.add(phase, name, args, code, priority);
 };
@@ -359,6 +359,13 @@ $.Factory.prototype = {
     this.graph = new $.Graph();
     this.stack = [];
     this.group();
+
+    // Add compile shortcut.
+    if (graph) {
+      graph.compile = function () {
+        return graph.tail().owner().compile();
+      };
+    }
 
     return graph;
   }//,
@@ -1027,7 +1034,7 @@ $.Outlet = function (inout, name, hint, type, category, exposed, meta) {
 $.Outlet.prototype = {
   // Unique ID for this outlet.
   id: function () {
-    return ['', this.name, this.index].join('__');
+    return ['', 'sg', this.name, this.index].join('_');
   },
 
   // Set exposed flag
