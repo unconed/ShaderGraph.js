@@ -200,7 +200,7 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
   });
 
   // Compile snippet and add to program.
-  var name = ['__', phase, snippet.name, node.owner().index ].join('');
+  var name = ['', 'sg', phase, snippet.name, node.owner().index ].join('_');
   var code = snippet.compile(name, replaced);
   program.add(phase, name, args, code, priority);
 };

@@ -26,7 +26,7 @@ $.Outlet = function (inout, name, hint, type, category, exposed, meta) {
 $.Outlet.prototype = {
   // Unique ID for this outlet.
   id: function () {
-    return ['', this.name, this.index].join('__');
+    return ['', 'sg', this.name, this.index].join('_');
   },
 
   // Set exposed flag
