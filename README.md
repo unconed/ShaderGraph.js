@@ -176,9 +176,9 @@ void _sg_fragment_main_6( vec3 color ) {
 void main() {
 vec3 _sg_colorOut_23 ;
 vec3 _sg_color_21 ;
-__fragmentmain4(_sg_color_21);
-__fragmentmain5(_sg_colorOut_23,_sg_color_21);
-__fragmentmain6(_sg_colorOut_23);
+_sg_fragment_main_4(_sg_color_21);
+_sg_fragment_main_5(_sg_colorOut_23,_sg_color_21);
+_sg_fragment_main_6(_sg_colorOut_23);
 }
 ```
 
