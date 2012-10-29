@@ -41,12 +41,12 @@ $.Program.prototype = {
   },
 
   external: function (category, arg) {
-    arg.category = category;
+    arg = _.extend({ category: category }, arg);
     this.externals[arg.name] = arg;
   },
 
   variable: function (phase, name, arg) {
-    arg.name = name;
+    arg = _.extend({}, arg, { name: name });
     this.variables[phase][name] = arg;
   },
 

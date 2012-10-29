@@ -84,7 +84,7 @@ $.Block.Snippet.prototype = _.extend({}, $.Block.prototype, {
   },
 
   outlets: function () {
-    return $.Block.Snippet.makeOutlets(this.snippet.arguments());
+    return $.Block.Snippet.makeOutlets(this.snippet);
   }//,
 
 });
@@ -137,8 +137,8 @@ $.Block.Material.prototype = _.extend({}, $.Block.prototype, {
   },
 
   outlets: function () {
-    var vertex   = $.Block.Snippet.makeOutlets(this.vertex.arguments());
-    var fragment = $.Block.Snippet.makeOutlets(this.fragment.arguments());
+    var vertex   = $.Block.Snippet.makeOutlets(this.vertex);
+    var fragment = $.Block.Snippet.makeOutlets(this.fragment);
 
     return _.union(vertex, fragment);
   }//,
@@ -148,8 +148,15 @@ $.Block.Material.prototype = _.extend({}, $.Block.prototype, {
 /**
  * Make outlets based on a given signature.
  */
-$.Block.Snippet.makeOutlets = function (args) {
+$.Block.Snippet.makeOutlets = function (snippet) {
   var outlets = [];
+
+  // Since snippets are cached, cache outlets too.
+  if (snippet.outlets) {
+    return snippet.outlets;
+  }
+
+  var args = snippet.arguments();
 
   _.each(args.parameters, function (arg) {
     arg.meta = { required: true };
@@ -165,6 +172,8 @@ $.Block.Snippet.makeOutlets = function (args) {
     arg.inout = $.IN;
     outlets.push(arg);
   });
+
+  snippet.outlets = outlets;
 
   return outlets;
 }
@@ -410,12 +419,12 @@ $.Program.prototype = {
   },
 
   external: function (category, arg) {
-    arg.category = category;
+    arg = _.extend({ category: category }, arg);
     this.externals[arg.name] = arg;
   },
 
   variable: function (phase, name, arg) {
-    arg.name = name;
+    arg = _.extend({}, arg, { name: name });
     this.variables[phase][name] = arg;
   },
 
@@ -507,6 +516,15 @@ $.Program.prototype = {
  * Must contain a single function with in/out parameters, returning void.
  */
 $.Snippet = function (code) {
+
+  // Only need to parse each snippet once.
+  if ($.Snippet.cache[code]) {
+    return $.Snippet.cache[code];
+  }
+  else {
+    $.Snippet.cache[code] = this;
+  }
+
   this.code = code;
 
   this.attributes = [];
@@ -518,6 +536,8 @@ $.Snippet = function (code) {
 
   this.parseCode(code);
 }
+
+$.Snippet.cache = {};
 
 $.Snippet.types = {
   'float':       'f',

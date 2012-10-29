@@ -6,6 +6,15 @@
  * Must contain a single function with in/out parameters, returning void.
  */
 $.Snippet = function (code) {
+
+  // Only need to parse each snippet once.
+  if ($.Snippet.cache[code]) {
+    return $.Snippet.cache[code];
+  }
+  else {
+    $.Snippet.cache[code] = this;
+  }
+
   this.code = code;
 
   this.attributes = [];
@@ -17,6 +26,8 @@ $.Snippet = function (code) {
 
   this.parseCode(code);
 }
+
+$.Snippet.cache = {};
 
 $.Snippet.types = {
   'float':       'f',

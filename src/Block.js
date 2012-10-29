@@ -64,7 +64,7 @@ $.Block.Snippet.prototype = _.extend({}, $.Block.prototype, {
   },
 
   outlets: function () {
-    return $.Block.Snippet.makeOutlets(this.snippet.arguments());
+    return $.Block.Snippet.makeOutlets(this.snippet);
   }//,
 
 });
@@ -117,8 +117,8 @@ $.Block.Material.prototype = _.extend({}, $.Block.prototype, {
   },
 
   outlets: function () {
-    var vertex   = $.Block.Snippet.makeOutlets(this.vertex.arguments());
-    var fragment = $.Block.Snippet.makeOutlets(this.fragment.arguments());
+    var vertex   = $.Block.Snippet.makeOutlets(this.vertex);
+    var fragment = $.Block.Snippet.makeOutlets(this.fragment);
 
     return _.union(vertex, fragment);
   }//,
@@ -128,8 +128,15 @@ $.Block.Material.prototype = _.extend({}, $.Block.prototype, {
 /**
  * Make outlets based on a given signature.
  */
-$.Block.Snippet.makeOutlets = function (args) {
+$.Block.Snippet.makeOutlets = function (snippet) {
   var outlets = [];
+
+  // Since snippets are cached, cache outlets too.
+  if (snippet.outlets) {
+    return snippet.outlets;
+  }
+
+  var args = snippet.arguments();
 
   _.each(args.parameters, function (arg) {
     arg.meta = { required: true };
@@ -145,6 +152,8 @@ $.Block.Snippet.makeOutlets = function (args) {
     arg.inout = $.IN;
     outlets.push(arg);
   });
+
+  snippet.outlets = outlets;
 
   return outlets;
 }
