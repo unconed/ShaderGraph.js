@@ -72,6 +72,15 @@ Test.Tests.Factory = function (assert, done) {
     '}',
   ].join("\n");
 
+  var orderSplit = [
+    '// Split',
+    'void main(out vec3 positionOut, out vec3 positionDUOut, out vec3 positionDVOut) { }',
+  ].join("\n");
+
+  var orderJoin = [
+    '// Join',
+    'void projectToView(in vec3 positionIn, in vec3 positionDUIn, in vec3 positionDVIn, out vec4 positionOut, out vec3 viewPositionOut) { }',
+  ].join("\n");
 
   // Test static creation methods
   var node1 = new ShaderGraph.Block.Snippet(fragment1).node();
@@ -169,6 +178,28 @@ Test.Tests.Factory = function (assert, done) {
   assert(graph.inputs().length == 0, 'Graph has no open inputs');
   assert(graph.outputs().length == 0, 'Graph has no open outputs');
   assert(graph.nodes[0].getOut('positionA').output[0].node !== graph.nodes[0].getOut('positionB').output[0].node, 'Split node connects to two different nodes');
+
+
+  // Test order preservation of parallel linking
+  var factory = new ShaderGraph.Factory();
+  var graph = factory
+    .snippet(orderSplit)
+    .group()
+      .snippet(concatPass)
+    .next()
+      .snippet(concatPass)
+    .next()
+      .snippet(concatPass)
+    .combine()
+    .snippet(orderJoin)
+    .end();
+
+  assert(graph.nodes.length == 5, 'Split/join creation of 5 nodes');
+  assert(graph.inputs().length == 0, 'Graph has no open inputs');
+  assert(graph.outputs().length == 2, 'Graph has two open outputs');
+  assert(graph.tail().inputs[0].input.node.inputs[0].input.name == 'positionOut', 'positionOut is first');
+  assert(graph.tail().inputs[1].input.node.inputs[0].input.name == 'positionDUOut', 'positionDUOut is second');
+  assert(graph.tail().inputs[2].input.node.inputs[0].input.name == 'positionDVOut', 'positionDVOut is third');
 
   done();
 };

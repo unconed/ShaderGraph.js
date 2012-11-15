@@ -18,6 +18,7 @@ $.Outlet = function (inout, name, hint, type, category, exposed, meta) {
   this.exposed  = !!exposed;
   this.meta     = meta || {};
   this.index    = ++$.Outlets;
+  this.key      = null;
 
   this.input = null;
   this.output = [];

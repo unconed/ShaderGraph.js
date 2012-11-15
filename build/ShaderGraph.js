@@ -1025,13 +1025,12 @@ $.Node.prototype = {
       }
 
       // Match outlets by type/name hint, then type/position key.
-      var match = outlet.type,
-          hint = [match, outlet.hint].join('-'),
-          count = track(match),
-          key = [match, count].join('-');
+      var type = outlet.type,
+          hint = [type, outlet.hint].join('-');
 
-      hints[hint] = outlet;
-      outlets[key] = outlet;
+      if (!hints[hint]) hints[hint] = outlet;
+      outlets[type] = outlets[type] || [];
+      outlets[type].push(outlet);
     });
 
     // Build hash keys of source outlets.
@@ -1041,22 +1040,22 @@ $.Node.prototype = {
       if (empty && outlet.output.length) return;
 
       // Match outlets by type and name.
-      var match = outlet.type,
-          hint = [match, outlet.hint].join('-');
+      var type = outlet.type,
+          hint = [type, outlet.hint].join('-');
 
       // Connect if found.
       if (hints[hint]) {
         hints[hint].connect(outlet);
+
+        delete hints[hint];
+        outlets[type].splice(outlets[type].indexOf(outlet), 1);
         return;
       }
 
       // Match outlets by type and order.
-      var count = track(match),
-          key = [match, count].join('-');
-
       // Link up corresponding outlets.
-      if (outlets[key]) {
-        outlets[key].connect(outlet);
+      if (outlets[type] && outlets[type].length) {
+        outlets[type].shift().connect(outlet);
       }
     });
 
@@ -1101,6 +1100,7 @@ $.Outlet = function (inout, name, hint, type, category, exposed, meta) {
   this.exposed  = !!exposed;
   this.meta     = meta || {};
   this.index    = ++$.Outlets;
+  this.key      = null;
 
   this.input = null;
   this.output = [];
