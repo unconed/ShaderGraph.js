@@ -21,7 +21,7 @@ Each snippet becomes a node, each input/output becomes an outlet. Outlets are co
 The graph is terminated by a material node with no outputs. The final shaders are compiled by traversing the graph backwards and assembling the code, assigning intermediate variables along the way.
 
 ShaderGraph provides a simple factory API for quick usage:
-```
+```javascript
 // Build serial graph of two snippets + material
 var graph = factory
             .snippet(code1)
@@ -35,7 +35,7 @@ var material = graph.compile();
 
 Graphs do not have to be linear and can include parallel tracks and branches:
 
-```
+```javascript
 // Split ->  Top   -> Join
 //       -> Bottom ->
 
@@ -63,7 +63,7 @@ Here we'll build a shader for sampling a texture, changing the sample color, and
 
 We'll have two vertex snippets and three fragment snippets:
 
-```
+```html
 <script type="application/x-glsl" id="vertex1">
 // Provide varying UV coordinates
 varying vec2 vUV;
@@ -111,7 +111,7 @@ ShaderGraph auto-loads the scripts from the DOM into variables. We build the gra
 
 ![Example nodes](https://raw.github.com/unconed/ShaderGraph.js/master/misc/nodes.png)
 
-```
+```javascript
 var factory = new ShaderGraph.Factory();
 var graph = factory
   .material('vertex1', 'fragment1')
@@ -130,7 +130,7 @@ Nodes can have any number of outlets, and they can be manually connected as well
 
 We compile the final material by finding the last node in the graph, looking up its attached material and invoking `.compile()`.
 
-```
+```javascript
 // Shorthand
 var program = graph.compile();
 
@@ -143,7 +143,7 @@ var program = material.compile();
 The returned program object has `uniforms`, `attributes`, `vertexShader` and `fragmentShader` properties and can be used as e.g. a Three.js ShaderMaterial.
 
 The shaders for the example above look like this when compiled:
-```
+```javascript
 // Vertex Shader
 void _sg_vertex_main_6(  ) {
   gl_Position = projectionMatrix *
@@ -160,7 +160,7 @@ _sg_vertex_main_4();
 }
 ```
 
-```
+```javascript
 // Fragment Shader
 uniform sampler2D texture;
 varying vec2 vUV;
