@@ -120,7 +120,7 @@ var graph = factory
   .end();
 ```
 
-The factory auto-chains the nodes together, matching up inputs and outputs for you, by name and type.
+The factory auto-chains the nodes together, matching up inputs and outputs for you, by name and type. ShaderGraph employs the convention of ignoring "In" and "Out" at the end of argument names.
 
 As a result, the graph actually looks like this:
 
