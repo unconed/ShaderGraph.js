@@ -107,7 +107,7 @@ void main() {
 </script>
 ```
 
-ShaderGraph auto-loads the scripts from the DOM into variables. We build the graph using the provided factory, passing in the pieces of GLSL code:
+ShaderGraph can auto-load the scripts from the DOM by ID. We build the graph using the provided factory, passing in the pieces of GLSL code:
 
 ![Example nodes](https://raw.github.com/unconed/ShaderGraph.js/master/misc/nodes.png)
 
