@@ -391,10 +391,12 @@ $.Factory.prototype = {
   },
 
   pass: function () {
+    this.next();
+
     var sub = this.stack[0];
     sub.start.push(null);
 
-    return this;
+    return this.combine();
   },
 
   next: function () {

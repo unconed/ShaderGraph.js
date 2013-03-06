@@ -211,9 +211,7 @@ Test.Tests.Factory = function (assert, done) {
     .snippet(concatSplit)
     .group()
       .snippet(concatDummy)
-    .next()
-      .pass()
-    .combine()
+    .pass()
     .snippet(concatJoin)
     .end();
 
