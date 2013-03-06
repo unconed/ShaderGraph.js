@@ -66,7 +66,7 @@ Test.Tests.Factory = function (assert, done) {
     '}',
   ].join("\n");
 
-  var concatPass = [
+  var concatDummy = [
     '// Split',
     'void main(in vec3 positionIn, out vec3 positionOut) {',
     '  positionOut = positionIn;',
@@ -170,9 +170,9 @@ Test.Tests.Factory = function (assert, done) {
   var graph = factory
     .snippet(concatSplit)
     .group()
-      .snippet(concatPass)
+      .snippet(concatDummy)
     .next()
-      .snippet(concatPass)
+      .snippet(concatDummy)
     .combine()
     .snippet(concatJoin)
     .end();
@@ -187,11 +187,11 @@ Test.Tests.Factory = function (assert, done) {
   var graph = factory
     .snippet(orderSplit)
     .group()
-      .snippet(concatPass)
+      .snippet(concatDummy)
     .next()
-      .snippet(concatPass)
+      .snippet(concatDummy)
     .next()
-      .snippet(concatPass)
+      .snippet(concatDummy)
     .combine()
     .snippet(orderJoin)
     .end();
@@ -203,6 +203,24 @@ Test.Tests.Factory = function (assert, done) {
   assert(graph.tail().inputs[1].input.node.inputs[0].input.name == 'positionDUOut', 'positionDUOut is second');
   assert(graph.tail().inputs[2].input.node.inputs[0].input.name == 'positionDVOut', 'positionDVOut is third');
 
+  // Test concat creation methods w/ passthrough
+  // split -> pass -> join
+  //       \- ---- -/
+  factory = new ShaderGraph.Factory();
+  graph = factory
+    .snippet(concatSplit)
+    .group()
+      .snippet(concatDummy)
+    .next()
+      .pass()
+    .combine()
+    .snippet(concatJoin)
+    .end();
+
+  assert(graph.nodes.length == 3, 'Split/join creation of 3 nodes w/ 1 passthrough');
+  assert(graph.inputs().length == 0, 'Graph has no open inputs');
+  assert(graph.outputs().length == 0, 'Graph has no open outputs');
+  assert(graph.nodes[0].getOut('positionA').output[0].node !== graph.nodes[0].getOut('positionB').output[0].node, 'Split node connects to two different nodes');
 
   // Test inouts
   factory = new ShaderGraph.Factory();
@@ -219,12 +237,14 @@ Test.Tests.Factory = function (assert, done) {
     /_sg_fragment_main_[0-9]+\(([^)]+)\);\s*(_sg_fragment_main_[0-9]+\(\1\);\s*){4}/g),
     'Inout argument chain re-uses the same single variable.');
 
-  /*
-  console.log(program.uniforms);
-  console.log(program.attributes);
-  console.log(program.vertexShader);
-  console.log(program.fragmentShader);
-  */
+
+    /*
+    program = graph.compile();
+    console.log(program.uniforms);
+    console.log(program.attributes);
+    console.log(program.vertexShader);
+    console.log(program.fragmentShader);
+    //*/
 
 
   done();

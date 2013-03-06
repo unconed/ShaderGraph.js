@@ -359,6 +359,13 @@ $.Factory.prototype = {
     return this;
   },
 
+  pass: function () {
+    var sub = this.stack[0];
+    sub.start.push(null);
+
+    return this;
+  },
+
   next: function () {
     var sub = this.stack.shift();
     var main = this.stack[0];
@@ -380,12 +387,19 @@ $.Factory.prototype = {
     var sub = this.stack.shift(),
         main = this.stack[0];
 
-    _.each(sub.start, function (to) {
-      _.each(main.end, function (from) {
-        from.connect(to, true);
+    if (sub.start.length) {
+      _.each(sub.start, function (to) {
+        // Passthrough all outlets to other side
+        if (!to) {
+          sub.end = sub.end.concat(main.end);
+        }
+        // Normal destination
+        else _.each(main.end, function (from) {
+          from.connect(to, true);
+        });
       });
-    });
-    main.end = sub.end;
+      main.end = sub.end;
+    }
 
     return this;
   },
