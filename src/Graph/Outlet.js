@@ -6,7 +6,7 @@ $.Outlet = function (inout, name, hint, type, category, exposed, meta) {
   // Object constructor syntax
   if (typeof inout == 'object') {
     var object = inout;
-    return new $.Outlet(object.inout, object.name, object.hint, object.type, object.category, object.exposed);
+    return new $.Outlet(object.inout, object.name, object.hint, object.type, object.category, object.exposed, object.meta);
   }
 
   this.node     = null;

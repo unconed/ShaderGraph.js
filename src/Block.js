@@ -33,8 +33,21 @@ $.Block.prototype = {
   },
 
   fetch: function (program, phase, outlet, priority) {
-    // add outlet code to program
-  }//,
+    // Add outlet output code to program
+  },
+
+  id: function (program, phase, outlet, priority) {
+    // Lookup inouts further up the chain
+    if (outlet.meta.inout) {
+      var input = outlet.node.get(outlet.name, $.IN).input;
+      if (input) {
+        return input.node.owner().fetch(program, phase, input, priority + 1);
+      }
+    }
+
+    // Use this outlet's ID as intermediate variable name
+    return outlet.id();
+  },
 
 };
 
@@ -59,13 +72,14 @@ $.Block.Snippet.prototype = _.extend({}, $.Block.prototype, {
     if (!program.include(this, phase)) {
       this.insert(program, phase, priority);
     }
+
     // Use this outlet's ID as intermediate variable name.
-    return outlet.id();
+    return this.id(program, phase, outlet, priority);
   },
 
   outlets: function () {
     return $.Block.Snippet.makeOutlets(this.snippet);
-  }//,
+  },
 
 });
 
@@ -113,7 +127,7 @@ $.Block.Material.prototype = _.extend({}, $.Block.prototype, {
     }
 
     // Use this outlet's ID as intermediate variable name.
-    return outlet.id();
+    return this.id(program, phase, outlet, priority);
   },
 
   outlets: function () {
@@ -121,7 +135,7 @@ $.Block.Material.prototype = _.extend({}, $.Block.prototype, {
     var fragment = $.Block.Snippet.makeOutlets(this.fragment);
 
     return _.union(vertex, fragment);
-  }//,
+  },
 
 });
 
@@ -139,13 +153,27 @@ $.Block.Snippet.makeOutlets = function (snippet) {
   var args = snippet.arguments();
 
   _.each(args.parameters, function (arg) {
+    // Strip in/out suffix and set meta data
+    arg = _.extend({}, arg);
     arg.meta = { required: true };
     arg.hint = arg.name.replace(/(In|Out)$/, '');
     arg.category = 'parameter';
+
+    // Split inout args into two separate outlets
+    if (arg.inout == $.INOUT) {
+      arg.meta.inout = true;
+
+      var input = _.extend({}, arg);
+      input.inout = $.IN;
+      outlets.push(input);
+
+      arg.inout = $.OUT;
+    }
     outlets.push(arg);
   });
 
   _.each(args.uniforms, function (arg) {
+    // Strip in/out suffix and set meta data
     arg.meta = { };
     arg.hint = arg.name.replace(/(In|Out)$/, '');
     arg.category = 'uniform';
@@ -167,8 +195,12 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
 
   // Assign intermediate variables.
   _.each(signature.parameters, function (arg) {
-    var outlet = node.get(arg.name);
-    if (arg.inout == $.IN) {
+
+    var fetch = arg.inout == $.INOUT ? $.IN : arg.inout;
+    var outlet = node.get(arg.name, fetch);
+
+    // Fetch code to calculate this input
+    if (arg.inout == $.IN || arg.inout == $.INOUT) {
       if (outlet.input) {
         var owner = outlet.input.node.owner();
 
@@ -177,10 +209,12 @@ $.Block.Snippet.compileCall = function (program, phase, node, snippet, priority)
         args.push(variable);
       }
       else {
-        console.log('Outlet', arg, outlet);
+        console.log('Outlet', arg, input);
         throw ["Missing connection on outlet for " + arg.name];
       }
     }
+
+    // Add output to call arguments
     else if (arg.inout == $.OUT) {
       var variable = outlet.id();
       program.variable(phase, variable, arg);

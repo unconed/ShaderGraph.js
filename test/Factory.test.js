@@ -51,6 +51,13 @@ Test.Tests.Factory = function (assert, done) {
     '}',
   ].join("\n");
 
+
+  var fragment4 = [
+    '// Pass through inout',
+    'void main(inout vec3 color) {',
+    '}',
+  ].join("\n");
+
   var concatSplit = [
     '// Split',
     'void main(out vec3 positionA, out vec3 positionB) {',
@@ -155,11 +162,6 @@ Test.Tests.Factory = function (assert, done) {
   assert(main, "Fragment has main() function");
   assert(matches && matches.length == 3, "Fragment main has 3 calls");
 
-  console.log(program.uniforms);
-  console.log(program.attributes);
-  console.log(program.vertexShader);
-  console.log(program.fragmentShader);
-
 
   // Test concat creation methods
   // split -> pass -> join
@@ -200,6 +202,30 @@ Test.Tests.Factory = function (assert, done) {
   assert(graph.tail().inputs[0].input.node.inputs[0].input.name == 'positionOut', 'positionOut is first');
   assert(graph.tail().inputs[1].input.node.inputs[0].input.name == 'positionDUOut', 'positionDUOut is second');
   assert(graph.tail().inputs[2].input.node.inputs[0].input.name == 'positionDVOut', 'positionDVOut is third');
+
+
+  // Test inouts
+  factory = new ShaderGraph.Factory();
+  graph = factory
+    .material(vertex1, fragment1)
+    .snippet(fragment4)
+    .snippet(fragment4)
+    .snippet(fragment4)
+    .material(vertex3, fragment3).end();
+  assert(graph.nodes.length == 5, 'Chainable creation of 5 nodes');
+
+  program = graph.compile();
+  assert(program.fragmentShader.match(
+    /_sg_fragment_main_[0-9]+\(([^)]+)\);\s*(_sg_fragment_main_[0-9]+\(\1\);\s*){4}/g),
+    'Inout argument chain re-uses the same single variable.');
+
+  /*
+  console.log(program.uniforms);
+  console.log(program.attributes);
+  console.log(program.vertexShader);
+  console.log(program.fragmentShader);
+  */
+
 
   done();
 };

@@ -29,9 +29,9 @@ Test.Tests.Snippet = function (assert, done) {
 '  attribute mat4 am4v[3];',
 '  void snippetTest(',
 '    in vec4 v4in, mat3 m3vin[3],',
-'    out vec4 v4out, out vec4 v4vout[3], out mat4 m4out, out mat4 m4vout[3]) {',
+'    out vec4 v4out, out vec4 v4vout[3], out mat4 m4out, out mat4 m4vout[3],',
+'    inout vec3 v3inout) {',
 '       gl_FragColor = v4in.xyz;',
-'    //',
 '  }'].join("\n");
 
   var snippet = new ShaderGraph.Snippet(code);
@@ -40,7 +40,7 @@ Test.Tests.Snippet = function (assert, done) {
     uniforms: 10,
     varyings: 6,
     attributes: 6,
-    parameters: 6,
+    parameters: 7,
   };
 
   function verifyTypes(category) {
